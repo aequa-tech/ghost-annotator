@@ -9,7 +9,7 @@ def assess_dataset(folder_path='data/measuring_hatespeech'):
     groups = pd.read_csv(f'{folder_path}/top_social_groups.csv')
     tot = sum(groups['count'])
     for item in groups.itertuples():
-        d[item.top_social_groups] = item.count/tot
+        d[item.top_social_group] = item.count/tot
     
     false_ratios = pd.read_csv(f'{folder_path}/annotator_false_ratios.csv')
     i = 0

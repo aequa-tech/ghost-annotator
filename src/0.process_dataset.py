@@ -6,9 +6,9 @@ df = pd.read_csv('data/measuring_hatespeech/corpus.csv')
 
 
 def compute_relative_frequencies(a_df):
-    grouped = a_df.groupby('comment_id').violence.apply(list).reset_index()
+    grouped = a_df.groupby('comment_id').label.apply(list).reset_index()
 
-    grouped['violence'] = grouped['violence'].apply(
+    grouped['label'] = grouped['label'].apply(
         lambda x: max([(v / sum(Counter(x).values())) for k, v in Counter(x).items()])
     )
 
@@ -25,10 +25,10 @@ def determine_majority_type(score):
         return 'no_majority'
 
 def compute_social_groups(a_df):
-    grouped = a_df.groupby(['comment_id']).violence.apply(list).reset_index()
-    grouped['majority'] = grouped.violence.apply(lambda x: Counter(x).most_common(1)[0][0])
+    grouped = a_df.groupby(['comment_id']).label.apply(list).reset_index()
+    grouped['majority'] = grouped.label.apply(lambda x: Counter(x).most_common(1)[0][0])
     a_df = a_df.merge(grouped[['comment_id','majority']], on='comment_id')
-    a_df = a_df[a_df.violence == a_df.majority]
+    a_df = a_df[a_df.label == a_df.majority]
 
     sg = a_df.groupby(['comment_id']).social_group.apply(list).reset_index()
     sg['top_social_group'] = sg.social_group.apply(lambda x: Counter(x).most_common(1)[0][0]).reset_index(drop=True)
@@ -37,10 +37,10 @@ def compute_social_groups(a_df):
     return sg
 
 def compute_false_ratio(a_df):
-    grouped = a_df.groupby(['comment_id']).violence.apply(list).reset_index()
-    grouped['majority'] = grouped.violence.apply(lambda x: Counter(x).most_common(1)[0][0])
+    grouped = a_df.groupby(['comment_id']).label.apply(list).reset_index()
+    grouped['majority'] = grouped.label.apply(lambda x: Counter(x).most_common(1)[0][0])
     a_df = a_df.merge(grouped[['comment_id','majority']], on='comment_id')
-    a_df['label_equal_majority'] = a_df.violence == a_df.majority
+    a_df['label_equal_majority'] = a_df.label == a_df.majority
 
     l = list()
 
@@ -56,7 +56,7 @@ def compute_false_ratio(a_df):
 
 
 relative_frequencies = compute_relative_frequencies(df)
-relative_frequencies['majority_type'] = relative_frequencies.violence.apply(determine_majority_type)
+relative_frequencies['majority_type'] = relative_frequencies.label.apply(determine_majority_type)
 
 relative_frequencies.to_csv('data/measuring_hatespeech/majority_types.csv', index=False)
 

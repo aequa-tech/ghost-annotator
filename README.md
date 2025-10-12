@@ -1,6 +1,6 @@
 # Calibration bias
 
-questa repository contiene codice e dati per il lavoro sulla calibration usata per calcolare i bias nelle predizioni dei modelli. La proposta di lavoro (e quindi il codice) è strutturata in due parti tra loro collegate
+questa repository contiene codice e dati per il lavoro sulla calibration usata per calcolare i bias nelle predizioni dei modelli (ci sono i requirements.txt se volete riprodurre tutto in un virtual environment). La proposta di lavoro (e quindi il codice) è strutturata in due parti tra loro collegate
 
 ## come vengono caratterizzati i dataset disaggregati?
 ormai ci sono molti dataset disaggregati ma cosa hanno in comune e in cosa invece divergono? In questo lavoro proviamo ad analizzare i dati su tre diversi assi: la distribuzione delle maggioranze, i gruppi sociali più rappresentati, la divergenza media degli annotatori dal voto di maggioranza.
@@ -16,9 +16,9 @@ Partendo da un file con queste colonne è possibile creare i seguenti file trami
 con questi quattro file è possibile compilare il file generale di assessment 'dataset_assessment.csv', che riporta le statistiche generali di ogni corpus (per ora ce n'è solo una)
 
 ### bug e cose da ottimizzare
-* ora tutte le funzioni usano la colonna 'violence' al posto di 'label'. è sbagliato e va cambiata
 * nel calcolare la divergenza degli annotatori dal voto di maggioranza non tengo conto del fatto che due label possano essere ugualmente maggioritarie. Per esempio, in una scala da 0 a 4 avere sia l'1 sia il 4 con 2 voti
-* i dati in 'datasets_assessment.csv', che si ottengono tramite lo script '1.assess_dataset.py' non sono aggiornati.
+* manca l'automatismo per fare l'assessment su tanti dataset diversi
+* il codice potrebbe essere razionalizzato con classi etc.
 
 ### cose da fare
 * aggiustare gli attuali bug

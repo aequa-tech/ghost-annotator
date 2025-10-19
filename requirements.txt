@@ -72,3 +72,4 @@ wcwidth @ file:///home/conda/feedstock_root/build_artifacts/wcwidth_175862227960
 xxhash==3.6.0
 yarl==1.22.0
 zipp @ file:///home/conda/feedstock_root/build_artifacts/zipp_1749421620841/work
+python_dotenv==1.1.1

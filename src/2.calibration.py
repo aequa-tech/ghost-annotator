@@ -7,13 +7,32 @@ import numpy as np
 import random
 import pandas as pd
 from tqdm import tqdm
+from tqdm import tqdm
+from dotenv import load_dotenv
+import os
 
+load_dotenv()  # carica le variabili dal file .env
 
+token = os.environ.get("HUGGINGFACE_HUB_TOKEN")
+print(token)
 class ConformalGeneration:
-        
+
+
+
     def __init__(self,model_name,device='mps',target_labels=['0','1','2','3','4']):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=torch.float16, device_map="auto")
+
+        if torch.cuda.is_available():
+            device = torch.device("cuda")  # GPU NVIDIA
+            print("Using CUDA GPU")
+        elif torch.backends.mps.is_available():
+            device = torch.device("mps")  # GPU Apple (M1/M2/M3)
+            print("Using Apple MPS GPU")
+        else:
+            device = torch.device("cpu")  # CPU fallback
+            print("Using CPU")
+
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name,token=token)
+        self.model = AutoModelForCausalLM.from_pretrained(model_name, dtype=torch.float16, device_map="auto",token=token)
         self.device = device
         self.model.to(self.device)
         self.target_labels = target_labels
@@ -71,13 +90,16 @@ class ConformalGeneration:
 
 
 model_name = "Qwen/Qwen2.5-0.5B-Instruct"
+model_name = "meta-llama/Llama-3.3-70B-Instruct-evals"
 
 df = pd.read_csv('data/measuring_hatespeech/corpus.csv')
 df = df[df.annotator_id==4047]
 
+cg = ConformalGeneration(model_name, target_labels=['0', '1', '2', '3', '4'])
+
 scores = list()
-for _,row in df.iterrows():
-    
+for _, row in tqdm(df.iterrows(), total=len(df), desc="Processing rows"):
+
     item = row.text
 
     prompt = f"""Task: you are a participant to an annotation task for the recognition of offensiveness
@@ -92,10 +114,9 @@ for _,row in df.iterrows():
 
     Answer only in JSON. No extra text.
     """
-    cg = ConformalGeneration(model_name,target_labels=['0','1','2','3','4'])
     try:
         res = cg.generate_probs(prompt)
-        conformities,score = cg.brier(res,row.violence)
+        conformities,score = cg.brier(res,row.label)
         scores.append(score)
     except Exception as e:
         print(e)

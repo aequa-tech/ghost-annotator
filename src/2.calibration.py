@@ -229,5 +229,6 @@ for model_name in [
             else:
                 partial_df.to_csv(result_file, index=False)
 
-        print(f"✅ Finished model {model_tag}, results saved to {result_file}")
+        print(f"✅ Finished model {model_tag} for {dataset_name}, results saved to {result_file}")
+    print(f"✅ Finished model {model_tag} for all datasets")
     clear_model_cache(model_name)

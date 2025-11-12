@@ -1,3 +1,8 @@
 /.env
 /.venv/
 /.idea
+/torch-2.8.0+gitc497508-cp312-cp312-linux_x86_64.whl
+/torchaudio-2.8.0+rocm7.0.2.git6e1c7fe9-cp312-cp312-linux_x86_64.whl
+/torchvision-0.23.0+rocm7.0.2.git824e8c87-cp312-cp312-linux_x86_64.whl
+/triton-3.4.0+rocm7.0.2.gitf9e5bf54-cp312-cp312-linux_x86_64.whl
+/src/mirko 1. analisi generale.py

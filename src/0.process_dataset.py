@@ -1,7 +1,7 @@
 import pandas as pd
 from collections import Counter
 
-df = pd.read_csv('data/measuring_hatespeech/corpus.csv')
+df = pd.read_csv('data/measuring_hatespeech/corpus - violence.csv')
 
 
 

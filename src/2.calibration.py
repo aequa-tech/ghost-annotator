@@ -229,14 +229,14 @@ for model_name in [
 
             prompt = corpus_prompt + f'  "{text}"'
 
-            print(prompt)
+            #print(prompt)
     
 
             cg = ConformalGeneration(model_name, target_labels=list(map(str,target_labels)))
 
             try:
                 res = cg.generate_probs(prompt)
-                print(res)
+               # print(res)
                 for label, annotator_id, social_group in zip(row.labels, row.annotators, row.social_groups):
 
                     conformities,score = cg.brier(res,label)

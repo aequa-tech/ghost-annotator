@@ -10,7 +10,7 @@ import shutil
 
 def clear_model_cache(model_name):
     # Trova la cartella della cache per il modello
-    model_cache_dir = os.path.join(os.getenv('HOME'), '.cache', 'huggingface', 'transformers', model_name)
+    model_cache_dir = os.path.join(os.getenv('HOME'), '.cache', 'huggingface', 'hub')
 
     if os.path.exists(model_cache_dir):
         # Rimuove la cartella della cache del modello
@@ -115,8 +115,8 @@ for model_name in [
                     "Qwen/Qwen2.5-7B-Instruct",
                     "meta-llama/Llama-3.1-8B-Instruct",
                     #grandi
-                    "Qwen2.5-Coder-14B-Instruct",
-                    "meta-llama/Llama-4-Maverick-17B-128E-Instruct",
+                    #"Qwen2.5-Coder-14B-Instruct",
+                    #"meta-llama/Llama-4-Maverick-17B-128E-Instruct",
                     #grandissimi? Non per ora
                     #...
 
@@ -124,11 +124,64 @@ for model_name in [
 
     ]:
 
-    for dataset in [
-        'data/measuring_hatespeech/cade - acceptability.csv',
-        'data/measuring_hatespeech/corpus - violence.csv',
-        'data/measuring_hatespeech/attitudes - hate speech.csv',
-        'data/measuring_hatespeech/davani - offensiveness.csv',
+    for (dataset,corpus_prompt) in [
+        (
+                'data/measuring_hatespeech/corpus - violence.csv',
+                 """Task: you are a participant to an annotation task for the recognition of violence
+        
+                Instruction: read the following social media post and annotate it with one value from the following options
+        
+                Options: 0, 1, 2, 3, 4. 0 == no violence, 4 == extremely violence
+        
+                Output format: the answer should follow this template {'answer': option}
+        
+                Answer only in JSON.No extra text.
+        
+                Question: How much does the following social media post contain violence?    """
+        ),
+        (
+                'data/measuring_hatespeech/attitudes - hate speech.csv',
+                """
+                Task: you are a participant to an annotation task for the recognition of hate speech
+            
+                Instruction: read the following social media post and annotate it with one value from the following options
+            
+                Options: 1,2,3,4,5. 1 == no hate speech, 5 == extremely hate speech
+                
+                Output format: the answer should follow this template {'answer': option}
+            
+                Answer only in JSON. No extra text.
+            
+                Question: How much does the following social media post contain hate speech?    """
+         ),
+        (
+                'data/measuring_hatespeech/cade - acceptable.csv',
+                """Task: you are a participant to an annotation task for the recognition of unacceptability
+                Instruction: read the following social media post and annotate it with one value from the following options
+    
+                Options: 1,2,3,4. 1 == acceptable, 4 == extremely unacceptable
+                
+                Output format: the answer should follow this template {'answer': option}
+            
+                Answer only in JSON. No extra text.
+            
+                Question: How much does the following social media post contain unacceptable content?    """
+         ),
+
+        (       'data/measuring_hatespeech/davani - offensiveness.csv',
+                """Task: you are a participant to an annotation task for the recognition of offensiveness
+        
+                Instruction: read the following social media post and annotate it with one value from the following options
+            
+                Options: 0,1,2,3,4. 0 == no offensiveness, 4 == extremely offensiveness
+                
+                Output format: the answer should follow this template {'answer': option}
+            
+                Answer only in JSON. No extra text.
+            
+                Question: How much does the following social media post contain offensiveness?    """
+
+         )
     ]:
 
         df = pd.read_csv(dataset)
@@ -174,20 +227,10 @@ for model_name in [
             labels = row.labels
 
 
-            prompt = f"""Task: you are a participant to an annotation task for the recognition of offensiveness
-        
-            Instruction: read the following social media post and annotate it with one value from the following options
-        
-            Options: {",".join(map(str, target_labels))}. {min(target_labels)} == no {task_name}, {max(target_labels)} == extremely {task_name}
-            
-            Output format: the answer should follow this template {{'answer': option}}
-        
-            Answer only in JSON. No extra text.
-        
-            Question: How much the following social media post contains {task_name}?  "{text}" 
-          
+            prompt = corpus_prompt + f'  "{text}"'
+
+            print(prompt)
     
-            """
 
             cg = ConformalGeneration(model_name, target_labels=list(map(str,target_labels)))
 

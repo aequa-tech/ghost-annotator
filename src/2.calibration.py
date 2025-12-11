@@ -155,7 +155,7 @@ for model_name in [
                 Question: How much does the following social media post contain hate speech?    """
          ),
         (
-                'data/measuring_hatespeech/cade - acceptable.csv',
+                'data/measuring_hatespeech/cade - acceptability.csv',
                 """Task: you are a participant to an annotation task for the recognition of unacceptability
                 Instruction: read the following social media post and annotate it with one value from the following options
     
@@ -190,7 +190,7 @@ for model_name in [
         model_tag = model_name.split("/")[-1]
         dataset_name=dataset.split("/")[-1].split(".")[0].split("-")[0].strip()
         task_name=dataset.split("/")[-1].split(".")[0].split("-")[1].strip()
-        result_file = f"results_{model_tag}_{dataset_name}.csv"
+        result_file = f"output/results_{model_tag}_{dataset_name}.csv"
 
         df = df.dropna(subset=['text', 'label', 'annotator_id', 'social_group'])
         df = df.dropna(subset=['label'])
@@ -220,6 +220,7 @@ for model_name in [
             annotators=('annotator_id', list),
             social_groups=('social_group', list)
         ).reset_index()
+        allucinazioni=0
         for row in tqdm(df_grouped.itertuples(), total=len(df_grouped)):
             if row.comment_id in done_ids:
                 continue
@@ -250,8 +251,9 @@ for model_name in [
                         "brier_score": score,
                     })
             except Exception as e:
-                print(e)
-                print(text)
+                allucinazioni+=1
+                #print(e)
+                #print(text)
                 continue
 
             # Salva parziale ogni 100 commenti
@@ -272,6 +274,6 @@ for model_name in [
             else:
                 partial_df.to_csv(result_file, index=False)
 
-        print(f"✅ Finished model {model_tag} for {dataset_name}, results saved to {result_file}")
+        print(f"✅ Finished model {model_tag} for {dataset_name}, results saved to {result_file}, allucinazioni {allucinazioni}")
     print(f"✅ Finished model {model_tag} for all datasets")
     clear_model_cache(model_name)

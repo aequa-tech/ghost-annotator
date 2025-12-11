@@ -6,13 +6,21 @@ import numpy as np
 
 def load_files(output_folder, modello, dataset):
     # File tipo 1 (results_{modello}_{dataset}.csv)
-    file_tipo1_pattern = os.path.join(output_folder, f"results_{modello}_{dataset}.csv")
-    df_tipo1_files = glob.glob(file_tipo1_pattern)
+    file_tipo_result_pattern = os.path.join(output_folder, f"results_{modello}_{dataset}.csv")
+    df_tipo_result_files = glob.glob(file_tipo_result_pattern)
 
-    if not df_tipo1_files:
+    if not df_tipo_result_files:
         raise FileNotFoundError(f"File tipo 1 per il modello {modello} e dataset {dataset} non trovato.")
 
-    df_tipo1 = pd.read_csv(df_tipo1_files[0])  # Carichiamo il primo file trovato
+    df_tipo_result = pd.read_csv(df_tipo_result_files[0])  # Carichiamo il primo file trovato
+
+    # Funzione per ottenere la chiave con il valore massimo nel dizionario
+    def get_max_key(prons_dict):
+        # Trova la chiave con il valore massimo
+        return max(prons_dict, key=prons_dict.get)
+
+    # Usa apply per aggiornare la colonna 'label'
+    df_tipo_result['label'] = df_tipo_result['probs'].apply(lambda prons_dict: get_max_key(eval(prons_dict)))
 
     # File tipo 2 ({dataset} - {fenomeno}.csv)
     file_tipo2_pattern = os.path.join("data/measuring_hatespeech", f"{dataset} - *.csv")
@@ -24,7 +32,7 @@ def load_files(output_folder, modello, dataset):
     # Carichiamo tutti i file tipo2
     df_tipo2 = pd.concat([pd.read_csv(file) for file in tipo2_files])
 
-    return df_tipo1, df_tipo2
+    return df_tipo_result, df_tipo2
 
 
 def preprocess_files(df_tipo1, df_tipo2):

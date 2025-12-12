@@ -59,7 +59,7 @@ class ConformalGeneration:
         with torch.no_grad():
             outputs = self.model.generate(
                 **inputs,
-                max_new_tokens=20,
+                max_new_tokens=10,
                 output_scores=True,
                 return_dict_in_generate=True,
                 do_sample=False,
@@ -74,48 +74,31 @@ class ConformalGeneration:
         #print(generated_tokens)
         i_num = next((i for i, t in enumerate(generated_tokens) if t.strip() in ["0", "1", "2", "3", "4"]), None)
 
-        if i_num is not None:
-            vocab_probs = probs[i_num, 0]  # shape [vocab_size]
-            token_probs = {}
-            tot = 0
+        num_steps = min(10, probs.shape[0])
+
+        # Accumulate probabilities per step
+        accum = {tok: 0.0 for tok in self.target_labels}
+
+        for step in range(num_steps):
+            vocab_probs = probs[step, 0]  # shape [vocab_size]
+
             for tok in self.target_labels:
                 tok_id = self.tokenizer(tok, add_special_tokens=False).input_ids[0]
-                token_probs[tok] = float(vocab_probs[tok_id])
-                tot += vocab_probs[tok_id].item()
+                accum[tok] += float(vocab_probs[tok_id])
 
-            for tok, p in token_probs.items():
-                token_probs[tok] = p / tot
-        
-        else:
-            # Take first 10 generation steps (or fewer if not enough)
-            num_steps = min(10, probs.shape[0])
+        # Average the accumulated probs
+        for tok in accum:
+            accum[tok] /= num_steps
 
-            # Accumulate probabilities per step
-            accum = {tok: 0.0 for tok in self.target_labels}
-
-            for step in range(num_steps):
-                vocab_probs = probs[step, 0]  # shape [vocab_size]
-
-                for tok in self.target_labels:
-                    tok_id = self.tokenizer(tok, add_special_tokens=False).input_ids[0]
-                    accum[tok] += float(vocab_probs[tok_id])
-
-            # Average the accumulated probs
+        # Normalize so they sum to 1
+        total = sum(accum.values())
+        if total > 0:
             for tok in accum:
-                accum[tok] /= num_steps
+                accum[tok] /= total
 
-            # Normalize so they sum to 1
-            total = sum(accum.values())
-            if total > 0:
-                for tok in accum:
-                    accum[tok] /= total
-
-            token_probs = accum
-
-
-
-            
-            return token_probs
+        token_probs = accum
+        
+        return token_probs
     
     def brier(self,probs,label):
         conf_scores = dict()

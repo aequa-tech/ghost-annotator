@@ -53,7 +53,50 @@ class ConformalGeneration:
         #self.model.to(self.device)
         self.target_labels = target_labels
 
-    def generate_probs(self,prompt):
+    def generate_probs(self, prompt):
+        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
+
+        # Precompute target token IDs ONCE
+        target_token_ids = torch.tensor(
+            [self.tokenizer(t, add_special_tokens=False).input_ids[0]
+            for t in self.target_labels],
+            device=self.device,
+        )
+
+        with torch.no_grad():
+            outputs = self.model.generate(
+                **inputs,
+                max_new_tokens=10,
+                output_scores=True,
+                return_dict_in_generate=True,
+                do_sample=False,
+            )
+
+        num_steps = min(10, len(outputs.scores))
+
+        # Accumulator tensor
+        accum = torch.zeros(len(self.target_labels), device=self.device)
+
+        for step in range(num_steps):
+            logits = outputs.scores[step][0]  # [vocab_size]
+
+            # Log-softmax for numerical stability
+            log_probs = torch.log_softmax(logits, dim=-1)
+
+            # Gather only target token probabilities
+            accum += torch.exp(log_probs[target_token_ids])
+
+        # Average
+        accum /= num_steps
+
+        # Normalize
+        accum /= accum.sum()
+        
+        return {
+            tok: float(accum[i])
+            for i, tok in enumerate(self.target_labels)
+        }
+    '''def generate_probs(self,prompt):
         inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
 
         with torch.no_grad():
@@ -98,7 +141,7 @@ class ConformalGeneration:
 
         token_probs = accum
         
-        return token_probs
+        return token_probs'''
     
     def brier(self,probs,label):
         conf_scores = dict()

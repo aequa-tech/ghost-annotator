@@ -272,6 +272,15 @@ for model_name in [
             annotators=('annotator_id', list),
             social_groups=('social_group', list)
         ).reset_index()
+        print(len(df_grouped))
+        if len(df_grouped) - len(done_ids) <= 0:
+            print(f"Dataset already processed with {model_tag} ")
+            continue
+
+        print(f"Item to do for {model_tag} {dataset_name}: {len(df_grouped) - len(done_ids)}")
+
+        cg = ConformalGeneration(model_name, target_labels=list(map(str, target_labels)))
+
         allucinazioni=0
         for row in tqdm(df_grouped.itertuples(), total=len(df_grouped)):
             if row.comment_id in done_ids:
@@ -279,13 +288,7 @@ for model_name in [
             text = row.text
             labels = row.labels
 
-
             prompt = corpus_prompt + f'  "{text}"'
-
-            #print(prompt)
-    
-
-            cg = ConformalGeneration(model_name, target_labels=list(map(str,target_labels)))
 
             try:
                 res = cg.generate_probs(prompt)

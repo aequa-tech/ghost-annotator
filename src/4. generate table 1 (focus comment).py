@@ -1,4 +1,5 @@
 import glob
+import json
 import os
 import pandas as pd
 import numpy as np
@@ -110,10 +111,39 @@ def aggregate_data(df_tipo1, df_tipo2, output_folder, modello, dataset):
     final_df = pd.merge(df_merged, fraction_agreement,  on=['comment_id', 'annotator_id'])
     final_df = pd.merge(final_df, avg_brier_score, on='comment_id')
     final_df = pd.merge(final_df, quartiles, on='comment_id')
+
+    # Funzione che somma i valori di 'colonna_1' e 'colonna_2'
+    def brier(probs):
+        probs=json.loads(probs)
+        label=max(probs, key=probs.get)
+        conf_scores = dict()
+        for pred, prob in probs.items():
+            if int(pred) == label:
+                conf_score = (1 - prob) ** 2
+                conf_scores[pred] = conf_score
+            else:
+                conf_score = (0 - prob) ** 2
+                conf_scores[pred] = conf_score
+        non_conformity = np.mean([x for x in conf_scores.values()])
+
+        return non_conformity
+
+
+    # Applicare la funzione per creare una nuova colonna 'colonna_3'
+    final_df['brier_score_model'] = final_df['probs'].apply(brier)
+
+    map_social_group={'Male':0, 'Female':1,
+    'Man Non-Western':0, 'Woman Non-Western':1, 'Other Non-Western':-1, 'Woman Western':1,
+     'Man Western':0, 'Other Western':-1,
+    'man black':0, 'man white':0, 'woman white':1, 'woman black':1, 'man hisp':0, 'na na':-1,
+     'man other':0, 'man native':0, 'nonBinary white':-1, 'woman middleEastern':1, 'man na':0, 1:0, 4:1, 2:0, 3:1}
+
+    final_df['social_group']=final_df['social_group'].apply(lambda x: map_social_group[x])
+
     print(final_df.columns)
     # Selezioniamo le colonne richieste
     final_df = final_df[['comment_id', 'text_model', 'annotator_id', 'social_group', 'label', 'fraction_agreement',
-                         'label_model', 'probs', 'brier_score', 'avg_brier_score', 'Q1', 'Q2', 'Q3']]
+                         'label_model', 'probs', 'brier_score', 'avg_brier_score', 'Q1', 'Q2', 'Q3','brier_score_model']]
 
     # Numero di annotatori
     num_annotators = df_merged.groupby('comment_id')['annotator_id'].nunique().reset_index(name='num_annotators')

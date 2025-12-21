@@ -42,12 +42,13 @@ plt.xlabel('Number of Annotators per Comment')
 plt.ylabel('Cumulative Frequency')
 plt.legend(title='Datasets', loc='lower right')
 plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: f'{y:.0f}%'))
-
-plt.grid(axis='y', color='lightgray', linestyle='-', linewidth=0.5, zorder=0)  # Griglia orizzontale, grigia chiara
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
 plt.gca().spines['left'].set_visible(False)
 plt.gca().spines['bottom'].set_visible(False)
+
+
+
 # Mostra il grafico
 plt.xticks(rotation=45)
 plt.tight_layout()

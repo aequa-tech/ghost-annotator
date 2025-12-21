@@ -13,9 +13,11 @@ file_pattern = os.path.join(input_folder, "step_1_*.csv")
 for file_path in glob.glob(file_pattern):
     # Leggi il CSV
     df = pd.read_csv(file_path)
+    print(file_path)
 
     # Raggruppa per annotator_id
     grouped = df.groupby('annotator_id')
+
 
     # Calcola le statistiche richieste
     summary = grouped.agg(

@@ -24,7 +24,7 @@ def load_files(output_folder, modello, dataset):
     df_tipo_result['label'] = df_tipo_result['probs'].apply(lambda prons_dict: get_max_key(eval(prons_dict)))
 
     # File tipo 2 ({dataset} - {fenomeno}.csv)
-    file_tipo2_pattern = os.path.join("data/measuring_hatespeech", f"{dataset} - *.csv")
+    file_tipo2_pattern = os.path.join("../data/measuring_hatespeech", f"{dataset} - *.csv")
     tipo2_files = glob.glob(file_tipo2_pattern)
 
     if not tipo2_files:
@@ -159,7 +159,7 @@ def aggregate_data(df_tipo1, df_tipo2, output_folder, modello, dataset):
 # Funzione principale per eseguire il processo per tutti i modelli e dataset
 def process_all_data(output_folder):
     # Troviamo tutti i dataset disponibili nella cartella
-    dataset_pattern = os.path.join("data/measuring_hatespeech", "*-*.csv")
+    dataset_pattern = os.path.join("../data/measuring_hatespeech", "* - *.csv")
     all_files = glob.glob(dataset_pattern)
     # Estraiamo i dataset unici
     datasets = set()

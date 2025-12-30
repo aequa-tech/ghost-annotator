@@ -189,5 +189,5 @@ def process_all_data(output_folder):
 
 
 # Eseguiamo il processo per tutti i dataset e modelli nella cartella di output
-output_folder = 'output'  # Cambia con il percorso della tua cartella di output
+output_folder = '../output_def'  # Cambia con il percorso della tua cartella di output
 process_all_data(output_folder)

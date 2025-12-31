@@ -5,7 +5,7 @@ import seaborn as sns
 from matplotlib.ticker import FuncFormatter
 from R_utilities import mappatura_dataset,mappatura_modelli
 # Definisci la cartella contenente i file CSV
-cartella_output = 'output'  # Sostituisci con il percorso corretto
+cartella_output = '../output_def'  # Sostituisci con il percorso corretto
 
 
 # Funzione per calcolare la percentuale di predizioni del modello mai selezionate dagli annotatori
@@ -29,12 +29,12 @@ def calcola_percentuale_predizioni(file_csv):
     for index, row in df_completo.iterrows():
 
         if row['label_model'] not in row['label']:
-            print(row)
+            #print(row)
             count+=1
 
     # Calcola la percentuale di predizioni "mai selezionate" rispetto al totale delle predizioni per ogni modello e dataset
-    model_name, dataset_name = file_csv.split('_')[2], file_csv.split('_')[-1].split(".")[0]
-    print(file_csv,model_name,dataset_name)
+    model_name, dataset_name = file_csv.split('/')[-1].split('_')[2], file_csv.split('_')[-1].split(".")[0]
+    print(file_csv,model_name,dataset_name,count,df['comment_id'].nunique())
     if count==0:
         percentuale=0
     else:
@@ -50,6 +50,7 @@ dati_per_grafico = []
 # Calcola la percentuale per ogni file CSV
 for file_csv in file_csvs:
     model_name, dataset_name, percentuale = calcola_percentuale_predizioni(os.path.join(cartella_output, file_csv))
+    print(model_name,dataset_name,percentuale)
     dati_per_grafico.append([model_name, dataset_name, percentuale])
 
 # Crea un DataFrame con i risultati

@@ -13,10 +13,10 @@ from sklearn.metrics import euclidean_distances
 from sklearn.metrics.pairwise import cosine_distances
 import json
 # Cartella contenente i file CSV
-cartella_output = 'output'
+cartella_output = 'output_def'
 
 file_csvs = [f for f in os.listdir(cartella_output) if f.startswith('step_2_') and f.endswith('.csv')]
-
+print(file_csvs)
 """
 ghost_annotator contiene la rappresentazione dei ghost annotator di ogni modello per ogni dataset
     ghost_annotator[model_name+' '+dataset_name]=[Q1,Q2,Q3]

@@ -9,7 +9,6 @@ def load_files(output_folder, modello, dataset):
     # File tipo 1 (results_{modello}_{dataset}.csv)
     file_tipo_result_pattern = os.path.join(output_folder, f"results_{modello}_{dataset}.csv")
     df_tipo_result_files = glob.glob(file_tipo_result_pattern)
-
     if not df_tipo_result_files:
         raise FileNotFoundError(f"File tipo 1 per il modello {modello} e dataset {dataset} non trovato.")
 
@@ -46,7 +45,7 @@ def preprocess_files(df_tipo1, df_tipo2):
 
 def calculate_fraction_agreement(df_tipo2):
     # Calcoliamo la percentuale di annotatori che hanno usato la stessa label
-    print(df_tipo2.columns)
+    #print(df_tipo2.columns)
     total_annotators = df_tipo2.groupby('comment_id')['annotator_id'].transform('nunique')
 
     # Calcoliamo il numero di annotatori che hanno usato la stessa label per ciascun 'annotation_id'
@@ -61,7 +60,7 @@ def calculate_fraction_agreement(df_tipo2):
     df_with_percentage['fraction_agreement'] = same_label_percentage  # Aggiungiamo la nuova colonna
 
 
-    print(df_with_percentage)
+    #print(df_with_percentage)
 
     df_with_percentage = df_with_percentage[['comment_id', 'annotator_id', 'fraction_agreement']]
 
@@ -71,7 +70,7 @@ def calculate_fraction_agreement(df_tipo2):
 def calculate_brier_scores(df_tipo1, df_tipo2):
     # Uniamo i due dataframe sulla base di comment_id e annotator_id
     df_merged = pd.merge(df_tipo1, df_tipo2, on=['comment_id', 'annotator_id'], suffixes=('_model', ''))
-    print(df_merged.columns)
+    #print(df_merged.columns)
 
     # Calcoliamo la media del Brier score per ogni comment_id
     avg_brier_score = df_merged.groupby('comment_id')['brier_score'].mean().reset_index(name='avg_brier_score')
@@ -100,14 +99,14 @@ def aggregate_data(df_tipo1, df_tipo2, output_folder, modello, dataset):
     quartiles = calculate_quartiles(df_merged)
 
     # Uniamo i dati
-    print("df_merged.columns")
-    print(df_merged.columns)
-    print("fraction_agreement.columns")
-    print(fraction_agreement.columns)
-    print("avg_brier_score.columns")
-    print(avg_brier_score.columns)
-    print("quartiles.columns")
-    print(quartiles.columns)
+    #print("df_merged.columns")
+    #print(df_merged.columns)
+    #print("fraction_agreement.columns")
+    #print(fraction_agreement.columns)
+    #print("avg_brier_score.columns")
+    #print(avg_brier_score.columns)
+    #print("quartiles.columns")
+    #print(quartiles.columns)
     final_df = pd.merge(df_merged, fraction_agreement,  on=['comment_id', 'annotator_id'])
     final_df = pd.merge(final_df, avg_brier_score, on='comment_id')
     final_df = pd.merge(final_df, quartiles, on='comment_id')
@@ -134,13 +133,13 @@ def aggregate_data(df_tipo1, df_tipo2, output_folder, modello, dataset):
 
     map_social_group={'Male':0, 'Female':1,
     'Man Non-Western':0, 'Woman Non-Western':1, 'Other Non-Western':-1, 'Woman Western':1,
-     'Man Western':0, 'Other Western':-1,
+     'Man Western':0, 'Other Western':-1,'Prefer not to say':-1,
     'man black':0, 'man white':0, 'woman white':1, 'woman black':1, 'man hisp':0, 'na na':-1,
      'man other':0, 'man native':0, 'nonBinary white':-1, 'woman middleEastern':1, 'man na':0, 1:0, 4:1, 2:0, 3:1}
 
     final_df['social_group']=final_df['social_group'].apply(lambda x: map_social_group[x])
 
-    print(final_df.columns)
+    #print(final_df.columns)
     # Selezioniamo le colonne richieste
     final_df = final_df[['comment_id', 'text_model', 'annotator_id', 'social_group', 'label', 'fraction_agreement',
                          'label_model', 'probs', 'brier_score', 'avg_brier_score', 'Q1', 'Q2', 'Q3','brier_score_model']]
@@ -166,9 +165,9 @@ def process_all_data(output_folder):
     for file in all_files:
         filename = os.path.basename(file)
         dataset_name = filename.split(' - ')[0]
-        print(dataset_name)
+        #print(dataset_name)
         datasets.add(dataset_name)
-    print(datasets)
+    #print(datasets)
 
     # Eseguiamo il processo per ogni dataset e modello
     for dataset in datasets:

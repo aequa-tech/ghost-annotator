@@ -6,7 +6,7 @@ import seaborn as sns
 from matplotlib.ticker import FuncFormatter
 from R_utilities import mappatura_dataset,mappatura_modelli
 # Definisci la cartella contenente i file CSV
-cartella_output = 'output'  # Sostituisci con il percorso corretto
+cartella_output = '../output_def'  # Sostituisci con il percorso corretto
 
 
 # Funzione per calcolare la percentuale di predizioni del modello mai selezionate dagli annotatori
@@ -17,22 +17,24 @@ def calcola_percentuale_predizioni(file_csv):
     # Raggruppa i dati per comment_id e annotator_id
     n_commenti_predetti = df['comment_id'].nunique()
     print(file_csv)
-    dataset_base_file=glob.glob(f"data/measuring_hatespeech/{file_csv.split("_")[-1].split(".")[0]} - *")[0]
+    dataset_base_file=glob.glob(f"../data/measuring_hatespeech/{file_csv.split("_")[-1].split(".")[0]} - *")[0]
 
     df = pd.read_csv(dataset_base_file)
     df = df.dropna(subset=['text', 'label', 'annotator_id', 'social_group'])
+    df = df.dropna(subset=['comment_id', 'text', 'label', 'annotator_id', 'social_group'])
+
     df = df.dropna(subset=['label'])
     n_commenti = df['comment_id'].nunique()
 
 
-    model_name, dataset_name = file_csv.split('_')[1], file_csv.split('_')[-1].split(".")[0]
-    print(file_csv,model_name,dataset_name)
+    model_name, dataset_name = file_csv.split('/')[-1].split('_')[1], file_csv.split('_')[-1].split(".")[0]
+    #print(file_csv,model_name,dataset_name)
 
     if n_commenti_predetti==0:
         percentuale=0
     else:
         percentuale = (n_commenti-n_commenti_predetti)/n_commenti * 100
-    print(dataset_name,dataset_base_file,n_commenti,n_commenti_predetti)
+    print(dataset_name,dataset_base_file,percentuale,n_commenti,n_commenti_predetti)
     return model_name, dataset_name, percentuale
 
 # Lista dei file CSV nella cartella di output

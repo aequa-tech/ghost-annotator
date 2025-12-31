@@ -178,7 +178,7 @@ for model_name in [
 
     for (dataset,corpus_prompt) in [
         (
-                'data/measuring_hatespeech/corpus - violence.csv',
+                '../data/measuring_hatespeech/corpus - violence.csv',
                  """Task: you are a participant to an annotation task for the recognition of violence
         
                 Instruction: read the following social media post and annotate it with one value from the following options
@@ -192,7 +192,7 @@ for model_name in [
                 Question: How much does the following social media post contain violence?    """
         ),
         (
-                'data/measuring_hatespeech/attitudes - hate speech.csv',
+                '../data/measuring_hatespeech/attitudes - hate speech.csv',
                 """
                 Task: you are a participant to an annotation task for the recognition of hate speech
             
@@ -207,7 +207,7 @@ for model_name in [
                 Question: How much does the following social media post contain hate speech?    """
          ),
         (
-                'data/measuring_hatespeech/cade - acceptability.csv',
+                '../data/measuring_hatespeech/cade - acceptability.csv',
                 """Task: you are a participant to an annotation task for the recognition of unacceptability
                 Instruction: read the following social media post and annotate it with one value from the following options
     
@@ -220,7 +220,7 @@ for model_name in [
                 Question: How much does the following social media post contain unacceptable content?    """
          ),
 
-        (       'data/measuring_hatespeech/davani - offensiveness.csv',
+        (       '../data/measuring_hatespeech/davani - offensiveness.csv',
                 """Task: you are a participant to an annotation task for the recognition of offensiveness
         
                 Instruction: read the following social media post and annotate it with one value from the following options
@@ -242,7 +242,7 @@ for model_name in [
         model_tag = model_name.split("/")[-1]
         dataset_name=dataset.split("/")[-1].split(".")[0].split("-")[0].strip()
         task_name=dataset.split("/")[-1].split(".")[0].split("-")[1].strip()
-        result_file = f"output/results_{model_tag}_{dataset_name}.csv"
+        result_file = f"../output_def/results_{model_tag}_{dataset_name}.csv"
 
         df = df.dropna(subset=['text', 'label', 'annotator_id', 'social_group'])
         df = df.dropna(subset=['label'])
@@ -255,7 +255,6 @@ for model_name in [
         else:
             done_ids = set()
             print(f"Starting fresh for {model_tag}")
-
 
         new_rows = []
         target_labels = sorted(df['label'].unique().tolist())
@@ -278,7 +277,7 @@ for model_name in [
             continue
 
         print(f"Item to do for {model_tag} {dataset_name}: {len(df_grouped) - len(done_ids)}")
-
+        continue
         cg = ConformalGeneration(model_name, target_labels=list(map(str, target_labels)))
 
         allucinazioni=0
@@ -305,6 +304,9 @@ for model_name in [
                         "probs": json.dumps(res),
                         "brier_score": score,
                     })
+                    print(text)
+                    print(conformities)
+                    print(score)
             except Exception as e:
                 allucinazioni+=1
                 #print(e)

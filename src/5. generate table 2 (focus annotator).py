@@ -3,8 +3,8 @@ import glob
 import os
 
 # Cartella contenente i file CSV di input
-input_folder = "output"
-output_folder = "output"  # puoi cambiare cartella di destinazione se vuoi
+input_folder = "../output_def"
+output_folder = "../output_def"  # puoi cambiare cartella di destinazione se vuoi
 
 # Pattern dei file di input
 file_pattern = os.path.join(input_folder, "step_1_*.csv")

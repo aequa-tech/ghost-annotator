@@ -7,13 +7,13 @@ from scipy.stats import pearsonr
 import glob
 
 # Cartella contenente i file CSV
-cartella_output = 'output'
+cartella_output = '../output_def'
 
 
 # Funzione per estrarre la media del Brier score per ogni modello e dataset
 def calcola_brier_score(file_csv):
     df = pd.read_csv(file_csv)
-    model_name = file_csv.split('_')[2]
+    model_name = file_csv.split('/')[-1].split('_')[2]
     dataset_name = file_csv.split('_')[-1].split(".")[0]
 
     # Calcolare la media del brier_score_model per ogni modello e dataset
@@ -26,12 +26,12 @@ def calcola_brier_score(file_csv):
 def calcola_percentuale_allucinazioni(file_csv):
     df = pd.read_csv(file_csv)
     print(file_csv)
-    model_name = file_csv.split('_')[2]
+    model_name = file_csv.split('/')[-1].split('_')[2]
     dataset_name = file_csv.split('_')[-1].split(".")[0]
 
     # Calcolare la percentuale di allucinazioni
     n_commenti_predetti = df['comment_id'].nunique()
-    dataset_base_file = glob.glob(f"data/measuring_hatespeech/{dataset_name} - *")[0]
+    dataset_base_file = glob.glob(f"../data/measuring_hatespeech/{dataset_name} - *")[0]
     df_base = pd.read_csv(dataset_base_file)
     df_base = df_base.dropna(subset=['text', 'label', 'annotator_id', 'social_group'])
     n_commenti = df_base['comment_id'].nunique()

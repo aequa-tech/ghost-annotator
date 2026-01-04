@@ -4,44 +4,20 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from scipy.stats import pearsonr
 import os
-import json
+
 cartella_output = '../output_def'  # Sostituisci con il percorso corretto
 
 def calcola_correlazione(file_csv):
     # Leggi il file CSV
     df = pd.read_csv(file_csv)
 
-    # Raggruppa i dati per comment_id e annotator_id
-    annotazioni_umanes = df[['comment_id', 'label']].drop_duplicates()
-
-    # Unisce con le predizioni del modello per calcolare la percentuale
-    predizioni_modello = df[['comment_id', 'label_model']].drop_duplicates()
-
-    # Raggruppiamo le etichette degli annotatori per ogni comment_id
-    annotazioni_per_comment_id = annotazioni_umanes.groupby('comment_id')['label'].apply(set).reset_index()
-
-    # Aggiungiamo le etichette degli annotatori al DataFrame delle predizioni
-    df_completo = pd.merge(predizioni_modello, annotazioni_per_comment_id, on='comment_id', how='left')
-
-    comment_id_with_ghost=[]
-    for index, row in df_completo.iterrows():
-
-        if row['label_model'] not in row['label']:
-            print(row)
-            comment_id_with_ghost.append(row['comment_id'])
-
-    df = df[~df['comment_id'].isin(comment_id_with_ghost)]
     # Calcola la percentuale di predizioni "mai selezionate" rispetto al totale delle predizioni per ogni modello e dataset
     model_name, dataset_name = file_csv.split('/')[-1].split('_')[2], file_csv.split('_')[-1].split(".")[0]
-
-    # Funzione per estrarre il valore massimo da una stringa JSON
-    def extract_max_prob(probs_str):
-        probs_dict = json.loads(probs_str)  # Converti la stringa in un dizionario
-        return max(probs_dict.values())  # Restituisci il valore massimo
-
-    # Crea una nuova colonna 'max_prob' con il valore massimo estratto da 'probs'
-    df['brier_ghost'] = df['probs'].apply(extract_max_prob)
-    corr, p_value = pearsonr(df['brier_score'], df['brier_ghost'])
+    df = df.groupby('comment_id').agg(
+        brier_score=('brier_score', 'mean'),
+        fraction_agreement=('fraction_agreement', 'max')
+    ).reset_index()
+    corr, p_value = pearsonr(df['brier_score'], df['fraction_agreement'])
     return model_name, dataset_name, corr, p_value
 
 # Lista dei file CSV nella cartella di output
@@ -113,8 +89,8 @@ for i in range(len(models)):
             text_color = "black"
             ax.text(j + 0.5, i + 0.17, f"p ≥ 0.05", ha='center', va='center', fontsize=8, color=text_color)
 
-plt.title('Correlation between the Brier score and Ghost', fontweight='bold')
-
+plt.title('Correlation between Brier Score and Relative Label', fontweight='bold')
+#defined as the ratio of the most voted label to the total number of votes
 print(pearsonr_values)
 print(p_values)
 # Spazio regolato

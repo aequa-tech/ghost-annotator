@@ -13,7 +13,7 @@ from sklearn.metrics import euclidean_distances
 from sklearn.metrics.pairwise import cosine_distances
 
 # Cartella contenente i file CSV
-cartella_output = 'output'
+cartella_output = '../output_def'
 
 
 

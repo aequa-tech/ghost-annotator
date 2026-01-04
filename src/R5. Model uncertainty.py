@@ -6,7 +6,7 @@ from matplotlib.ticker import FuncFormatter
 from R_utilities import mappatura_modelli, mappatura_dataset
 
 # Definisci la cartella contenente i file CSV
-cartella_output = 'output'  # Sostituisci con il percorso corretto
+cartella_output = '../output_def'  # Sostituisci con il percorso corretto
 
 
 # Funzione per estrarre i dati necessari per il box plot
@@ -18,7 +18,7 @@ def estrai_dati_box_plot(file_csv):
     df_unique = df[['comment_id', 'brier_score_model']].drop_duplicates()
 
     # Unisci altre informazioni come il modello e dataset per etichettare correttamente
-    model_name = file_csv.split('_')[2]
+    model_name = file_csv.split('/')[-1].split('_')[2]
     dataset_name = file_csv.split('_')[-1].split(".")[0]
 
     df_unique['model_name'] = model_name
@@ -29,7 +29,7 @@ def estrai_dati_box_plot(file_csv):
 
 # Lista dei file CSV nella cartella di output
 file_csvs = [f for f in os.listdir(cartella_output) if f.startswith('step_1_') and f.endswith('.csv')]
-
+print(file_csvs)
 # Crea un DataFrame vuoto per contenere i risultati
 dati_box_plot = []
 
@@ -44,7 +44,7 @@ df_box_plot = pd.concat(dati_box_plot, ignore_index=True)
 # Crea un nuovo dataframe con i nomi rimappati per i modelli
 df_box_plot['model_name'] = df_box_plot['model_name'].map(mappatura_modelli)
 df_box_plot['dataset_name'] = df_box_plot['dataset_name'].map(mappatura_dataset)
-
+print(df_box_plot)
 # Creazione del box plot
 plt.figure(figsize=(10, 6))
 

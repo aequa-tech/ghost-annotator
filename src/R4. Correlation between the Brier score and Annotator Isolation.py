@@ -5,14 +5,14 @@ import pandas as pd
 from scipy.stats import pearsonr
 import os
 
-cartella_output = 'output'  # Sostituisci con il percorso corretto
+cartella_output = '../output_def'  # Sostituisci con il percorso corretto
 
 def calcola_correlazione(file_csv):
     # Leggi il file CSV
     df = pd.read_csv(file_csv)
 
     # Calcola la percentuale di predizioni "mai selezionate" rispetto al totale delle predizioni per ogni modello e dataset
-    model_name, dataset_name = file_csv.split('_')[2], file_csv.split('_')[-1].split(".")[0]
+    model_name, dataset_name = file_csv.split('/')[-1].split('_')[2], file_csv.split('_')[-1].split(".")[0]
     df['fraction_agreement']=1-df['fraction_agreement']
     corr, p_value = pearsonr(df['brier_score'], df['fraction_agreement'])
     return model_name, dataset_name, corr, p_value

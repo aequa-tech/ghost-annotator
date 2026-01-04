@@ -13,7 +13,7 @@ from sklearn.metrics import euclidean_distances
 from sklearn.metrics.pairwise import cosine_distances
 import json
 # Cartella contenente i file CSV
-cartella_output = 'output_def'
+cartella_output = '../output_def'
 
 file_csvs = [f for f in os.listdir(cartella_output) if f.startswith('step_2_') and f.endswith('.csv')]
 print(file_csvs)
@@ -26,7 +26,7 @@ ghost_annotator={}
 for file_csv in file_csvs:
     print("\n", file_csv)
     df = pd.read_csv(os.path.join(cartella_output, file_csv.replace('step_2_', 'step_1_')))
-    model_name = file_csv.split('_')[2]
+    model_name = file_csv.split('/')[-1].split('_')[2]
     dataset_name = file_csv.split('_')[-1].split(".")[0]
     print(model_name, dataset_name)
 
@@ -81,8 +81,7 @@ for file_csv in file_csvs:
             for i in range(0,len(brier_scores)):
                 brier_score = np.array(brier_scores[i])
                 ghost_annotator_vector = np.array(ghost_annotator[ghost_dataset_name][ghost_model_name])
-                distance = euclidean_distances([brier_score], [ghost_annotator_vector])[0][
-                    0]  # restituisce la distanza scalare
+                distance = cosine_distances([brier_score], [ghost_annotator_vector])[0][0]
 
                 if social_groups[i]==0:
                     # Calcola la distanza Euclidea tra i due vettori (brier_score e ghost_annotator_vector)
@@ -95,7 +94,7 @@ for file_csv in file_csvs:
             #print(avg_distance_0,avg_distance_1,avg_distance_0 / float(avg_distance_1))
             if dataset_name not in head_map_data[ghost_dataset_name+' '+ghost_model_name]:
                 head_map_data[ghost_dataset_name+' '+ghost_model_name][dataset_name]={}
-            head_map_data[ghost_dataset_name+' '+ghost_model_name][dataset_name][model_name] = avg_distance_0 / float(avg_distance_1)
+            head_map_data[ghost_dataset_name+' '+ghost_model_name][dataset_name][model_name] = (float(avg_distance_1)-avg_distance_0 ) / (float(avg_distance_1)+avg_distance_0 )
 
 
 print(head_map_data)
@@ -105,13 +104,39 @@ def plot_heatmap(data_dict, title):
 
     # Crea una heatmap
     plt.figure(figsize=(10, 8))
-    sns.heatmap(data_matrix, annot=True, cmap='coolwarm', cbar=True, xticklabels=list(data_dict.keys()), yticklabels=list(data_dict.values())[0].keys())
+    sns.heatmap(data_matrix, annot=True, cmap='coolwarm', cbar=True, xticklabels=list(data_dict.keys()), yticklabels=list(data_dict.values())[0].keys(),vmin=-1, vmax=1)
     plt.title(title)
     plt.xlabel('Models')
     plt.ylabel('Datasets')
     plt.tight_layout()
-    plt.show()
+    plt.savefig(f"{title}.png")  # Sostituisci il nome del file come preferisci
+    #plt.show()
 
 # Creare una heatmap per ogni "ghost" annotator (chiave di dataset e modello)
 for key, value in head_map_data.items():
-    plot_heatmap(value, f'Heatmap for {key}')
+
+    plot_heatmap(value, f'Ghost annotator profile {key}')
+
+# Creare una nuova struttura per la media dei valori di tutte le heatmap
+mean_heatmap_data = {}
+
+# Per ogni dataset e modello, calcoliamo la media dei valori di tutte le heatmap
+for key, value in head_map_data.items():
+    for dataset_name, model_data in value.items():
+        if dataset_name not in mean_heatmap_data:
+            mean_heatmap_data[dataset_name] = {}
+
+        for model_name, val in model_data.items():
+            if model_name not in mean_heatmap_data[dataset_name]:
+                mean_heatmap_data[dataset_name][model_name] = []
+
+            mean_heatmap_data[dataset_name][model_name].append(val)
+# Calcoliamo la media per ogni quadrato (i, j)
+final_heatmap_data = {}
+
+for dataset_name, model_data in mean_heatmap_data.items():
+    final_heatmap_data[dataset_name] = {}
+    for model_name, values in model_data.items():
+        final_heatmap_data[dataset_name][model_name] = np.mean(values)
+
+plot_heatmap(final_heatmap_data, "Ghost profile Average Heatmap of All Models All datasets.png")

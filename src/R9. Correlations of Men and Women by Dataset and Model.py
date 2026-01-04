@@ -11,7 +11,7 @@ from scipy.stats import ttest_ind, mannwhitneyu
 import seaborn as sns
 import matplotlib.pyplot as plt
 # Cartella contenente i file CSV
-cartella_output = 'output'
+cartella_output = '../output_def'
 
 # Lista dei file CSV nella cartella di output
 file_csvs = [f for f in os.listdir(cartella_output) if f.startswith('step_1_') and f.endswith('.csv')]
@@ -44,7 +44,7 @@ for file_csv in file_csvs:
     df = pd.read_csv(os.path.join(cartella_output, file_csv))
     print(df.columns)
     # Ottieni il nome del modello e del dataset
-    model_name = file_csv.split('_')[2]
+    model_name = file_csv.split('/')[-1].split('_')[2]
 
     dataset_name = file_csv.split('_')[-1].split(".")[0]
 

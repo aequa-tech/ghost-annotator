@@ -63,9 +63,9 @@ sns.boxplot(x='dataset_name', y='brier_score_model', hue='model_name', data=df_b
 
 # Aggiusta la formattazione
 plt.title('Model uncertainty Across Models and Datasets', fontweight='bold', fontsize=24)
-plt.xlabel('Datasets',fontsize=18)
+plt.xlabel('',fontsize=18)
 plt.ylabel('Model uncertainty',fontsize=18)
-plt.xticks(rotation=45,fontsize=16)
+plt.xticks(rotation=0,fontsize=16)
 plt.yticks(fontsize=16)
 plt.ylim(0,0.3)
 font_properties = font_manager.FontProperties(weight='bold', size=18)
@@ -73,8 +73,10 @@ plt.legend(title="Models", fontsize=16, title_fontproperties=font_properties,
            ncol=2, loc='upper left')
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
-plt.gca().spines['left'].set_visible(False)
-plt.gca().spines['bottom'].set_visible(False)
+plt.gca().spines['left'].set_visible(True)
+plt.gca().spines['left'].set_color('gray')
+plt.gca().spines['bottom'].set_visible(True)
+plt.gca().spines['bottom'].set_color('gray')
 plt.grid(axis='y', color='lightgray', linestyle='-', linewidth=0.5, zorder=0)  # Griglia orizzontale, grigia chiara
 
 plt.tight_layout()

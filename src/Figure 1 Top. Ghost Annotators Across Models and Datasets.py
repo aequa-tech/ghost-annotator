@@ -81,20 +81,22 @@ sns.barplot(x='dataset_name', y='percentuale', hue='model_name', data=df_risulta
 
 
 plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: f'{y:.0f}%'))
-plt.ylim(0, 110)
+plt.ylim(0, 119)
 # Creare un oggetto per il titolo della legenda con font grassetto
 font_properties = font_manager.FontProperties(weight='bold', size=18)
-plt.legend(title="Models", fontsize=16, title_fontproperties=font_properties)
+plt.legend(title="Models", fontsize=16, title_fontproperties=font_properties, ncol=2,loc='upper center',bbox_to_anchor=(0.5, 0.99) )
 plt.grid(axis='y', color='lightgray', linestyle='-', linewidth=0.5, zorder=0)  # Griglia orizzontale, grigia chiara
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
-plt.gca().spines['left'].set_visible(False)
-plt.gca().spines['bottom'].set_visible(False)
+plt.gca().spines['left'].set_visible(True)
+plt.gca().spines['left'].set_color('gray')
+plt.gca().spines['bottom'].set_visible(True)
+plt.gca().spines['bottom'].set_color('gray')
 # Aggiungi titoli e etichette
 plt.title('Ghost Predictions Across Models and Datasets', fontweight='bold', fontsize=24)
-plt.xlabel('Datasets',fontsize=18)
+plt.xlabel('',fontsize=18)
 plt.ylabel('Percentage of Ghost Predictions (%)',fontsize=18)
-plt.xticks(rotation=45,fontsize=16)
+plt.xticks(rotation=0,fontsize=16)
 plt.yticks(fontsize=16)
 plt.tight_layout()
 plt.savefig("img/ghost_annotators_acress_models_and_datasets.pdf")

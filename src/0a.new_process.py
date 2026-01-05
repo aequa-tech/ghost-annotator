@@ -10,7 +10,7 @@ for doc in glob.glob('output_def/results*.csv'):
     df = pd.read_csv(path)
 
     if 'cade' in path:
-        cade = pd.read_csv('data/cade/disaggregated_corpus.csv')
+        cade = pd.read_csv('data/measuring_hatespeech/cade - acceptability.csv')
 
         df = df[['comment_id','text','probs','brier_score']].drop_duplicates().merge(cade[['comment_id','annotator_id','label']])
 
@@ -34,8 +34,12 @@ for doc in glob.glob('output_def/results*.csv'):
 
     grouped = {row.comment_id:row.label for _,row in grouped.iterrows() if row.label is not None}
 
+    avg_grouped = [grouped[x] for x in grouped]
+    avg_grouped = np.mean([x for y in avg_grouped for x in y])
 
-
+    avg_label = np.mean([int(max(row.probs,key=row.probs.get)) for _,row in df.iterrows()])
+    std_label = np.std([int(max(row.probs,key=row.probs.get)) for _,row in df.iterrows()])
+    print(name,corpus,avg_grouped,avg_label,std_label)
     l = list()
     for ann in annotators:
         i=0
@@ -57,5 +61,3 @@ for doc in glob.glob('output_def/results*.csv'):
     forcorr = pd.DataFrame(l)
     corr = pearsonr(x=forcorr.isolation,y=forcorr.brier)
 
-    print(name,corpus)
-    print(corr,np.mean(forcorr.brier),np.mean(forcorr.isolation))

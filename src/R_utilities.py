@@ -5,17 +5,10 @@ mappatura_modelli = {
     'Qwen2.5-7B-Instruct': 'Qwen2.5-7B'
 }
 mappatura_dataset = {
-<<<<<<< Updated upstream
-    'davani': 'disentangle',
-    'measuring': 'mhs',
-    'attitudes': 'attitudes',
-    'cade': 'cade'
-=======
     'davani': 'Disentangling',
     'measuring': 'MHS',
     'attitudes': 'Attitudes',
     'cade': 'CADE'
->>>>>>> Stashed changes
 }
 
 mappatura_dataset_colore = {

@@ -109,7 +109,7 @@ def plot_heatmap(data_dict, title):
     plt.xlabel('Models')
     plt.ylabel('Datasets')
     plt.tight_layout()
-    plt.savefig(f"{title}.png")  # Sostituisci il nome del file come preferisci
+    plt.savefig(f"img/{title}.png")  # Sostituisci il nome del file come preferisci
     #plt.show()
 
 # Creare una heatmap per ogni "ghost" annotator (chiave di dataset e modello)

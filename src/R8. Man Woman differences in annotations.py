@@ -7,7 +7,7 @@ from scipy.stats import ttest_ind, mannwhitneyu
 from sklearn.metrics import pairwise_distances
 
 # Cartella contenente i file CSV
-cartella_output = 'data/measuring_hatespeech'
+cartella_output = '../data/measuring_hatespeech'
 
 # Lista dei file CSV nella cartella di output
 file_csvs = [f for f in os.listdir(cartella_output) if ' - ' in f and f.endswith('.csv')]

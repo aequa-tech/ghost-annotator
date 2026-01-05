@@ -51,13 +51,14 @@ plt.figure(figsize=(10, 6))
 # Ordina i modelli per una visualizzazione chiara
 modelli_ordinati = ['Llama-3.2-1B', 'Qwen2.5-1.5B', 'Llama-3.1-8B',
                     'Qwen2.5-7B']  # Sostituisci con i tuoi nomi di modello
-
+# Ordina i datasets in ordine alfabetico inverso
+dataset_ordinati = sorted(df_box_plot['dataset_name'].unique(), reverse=True)
 # Impostiamo i flierprops per ridurre la dimensione delle palline (outliers)
 flierprops = dict(marker='o', markerfacecolor='black', markersize=1, markeredgewidth=0)
 
 sns.boxplot(x='dataset_name', y='brier_score_model', hue='model_name', data=df_box_plot,
             hue_order=modelli_ordinati, palette=['#fdae61','#abd9e9','#d7191c','#2c7bb6'],
-            flierprops=flierprops)
+            flierprops=flierprops,order=dataset_ordinati)
 
 # Aggiusta la formattazione
 plt.title('Model uncertainty Across Models and Datasets', fontweight='bold')
@@ -72,6 +73,15 @@ plt.gca().spines['bottom'].set_visible(False)
 plt.grid(axis='y', color='lightgray', linestyle='-', linewidth=0.5, zorder=0)  # Griglia orizzontale, grigia chiara
 
 plt.tight_layout()
+plt.savefig("img/model_uncertainty_across_models_and_datasets.png")
+
 
 # Mostra il grafico
 plt.show()
+
+# Calcola la media per ogni combinazione di modello e dataset
+media_per_model_dataset = df_box_plot.groupby(['model_name', 'dataset_name'])['brier_score_model'].mean().reset_index()
+
+# Stampa i valori della media
+print("Media dei Brier Scores per modello e dataset:")
+print(media_per_model_dataset)

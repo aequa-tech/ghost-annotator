@@ -22,7 +22,8 @@ ghost_annotator contiene la rappresentazione dei ghost annotator di ogni modello
     ghost_annotator[model_name+' '+dataset_name]=[Q1,Q2,Q3]
 
 """
-"""ghost_annotator={}
+"""
+ghost_annotator={}
 for file_csv in file_csvs:
     print("\n", file_csv)
     df = pd.read_csv(os.path.join(cartella_output, file_csv.replace('step_2_', 'step_1_')))
@@ -112,8 +113,8 @@ def plot_heatmap(data_dict, title):
     plt.xlabel('Models')
     plt.ylabel('Datasets')
     plt.tight_layout()
-    plt.savefig(f"{title}.png")  # Sostituisci il nome del file come preferisci
-    #plt.show()
+    plt.savefig(f"img/{title}.png")  # Sostituisci il nome del file come preferisci
+    plt.show()
 
 # Creare una heatmap per ogni "ghost" annotator (chiave di dataset e modello)
 for key, value in head_map_data.items():
@@ -152,44 +153,44 @@ import seaborn as sns
 # Supponiamo che `heat_map` sia il dizionario che hai fornito.
 heat_map = {
     'Qwen2.5-7B-Instruct': {
-        'corpus': {'corpus': np.float64(-0.00681610080785954), 'davani': np.float64(0.0015770813066581142),
+        'measuring': {'measuring': np.float64(-0.00681610080785954), 'davani': np.float64(0.0015770813066581142),
                    'attitudes': np.float64(-0.18117128353522513), 'cade': np.float64(0.14924862302621011)},
-        'davani': {'corpus': np.float64(-0.0059482663187883445), 'davani': np.float64(0.0003959240205685532),
+        'davani': {'measuring': np.float64(-0.0059482663187883445), 'davani': np.float64(0.0003959240205685532),
                    'attitudes': np.float64(-0.25347405815719526), 'cade': np.float64(0.127542316342511)},
-        'attitudes': {'corpus': np.float64(-0.007527073023580467), 'davani': np.float64(0.002490106878937915),
+        'attitudes': {'measuring': np.float64(-0.007527073023580467), 'davani': np.float64(0.002490106878937915),
                       'attitudes': np.float64(-0.14016969565922066), 'cade': np.float64(0.1647236106159611)},
-        'cade': {'corpus': np.float64(-0.005780833195289886), 'davani': np.float64(0.00044536404970565123),
+        'cade': {'measuring': np.float64(-0.005780833195289886), 'davani': np.float64(0.00044536404970565123),
                  'attitudes': np.float64(-0.25155776028995586), 'cade': np.float64(0.124421797034258)}
     },
     'Llama-3.2-1B-Instruct': {
-        'attitudes': {'attitudes': np.float64(0.07804802428310889), 'corpus': np.float64(-0.03415396827229657),
+        'attitudes': {'attitudes': np.float64(0.07804802428310889), 'measuring': np.float64(-0.03415396827229657),
                       'davani': np.float64(0.024188070511979902), 'cade': np.float64(0.07793022431173054)},
-        'corpus': {'attitudes': np.float64(0.07677783816662816), 'corpus': np.float64(-0.034489786851672755),
+        'measuring': {'attitudes': np.float64(0.07677783816662816), 'measuring': np.float64(-0.034489786851672755),
                    'davani': np.float64(0.02807461668110284), 'cade': np.float64(0.12689331761817543)},
-        'davani': {'attitudes': np.float64(0.07817634739249339), 'corpus': np.float64(-0.034314567721204815),
+        'davani': {'attitudes': np.float64(0.07817634739249339), 'measuring': np.float64(-0.034314567721204815),
                    'davani': np.float64(0.0231994486769855), 'cade': np.float64(0.039708858898281525)},
-        'cade': {'attitudes': np.float64(0.06828619991992306), 'corpus': np.float64(-0.03044168334898818),
+        'cade': {'attitudes': np.float64(0.06828619991992306), 'measuring': np.float64(-0.03044168334898818),
                  'davani': np.float64(0.03197375352659472), 'cade': np.float64(0.2041503125507743)}
     },
     'Llama-3.1-8B-Instruct': {
-        'cade': {'cade': np.float64(-0.16917878773450792), 'corpus': np.float64(-0.01819709103976764),
+        'cade': {'cade': np.float64(-0.16917878773450792), 'measuring': np.float64(-0.01819709103976764),
                  'attitudes': np.float64(0.03719246083057927), 'davani': np.float64(-0.014721940442076531)},
-        'corpus': {'cade': np.float64(-0.14316142674447638), 'corpus': np.float64(-0.01908048850897995),
+        'measuring': {'cade': np.float64(-0.14316142674447638), 'measuring': np.float64(-0.01908048850897995),
                    'attitudes': np.float64(0.03193145560640635), 'davani': np.float64(-0.0153660022196154)},
-        'attitudes': {'cade': np.float64(-0.17095647745580622), 'corpus': np.float64(-0.02014230925029515),
+        'attitudes': {'cade': np.float64(-0.17095647745580622), 'measuring': np.float64(-0.02014230925029515),
                       'attitudes': np.float64(0.038803138225264135), 'davani': np.float64(-0.014252633995678643)},
-        'davani': {'cade': np.float64(-0.1457032591401882), 'corpus': np.float64(-0.02013127656179256),
+        'davani': {'cade': np.float64(-0.1457032591401882), 'measuring': np.float64(-0.02013127656179256),
                    'attitudes': np.float64(0.033475245767827726), 'davani': np.float64(-0.014978463068321773)}
     },
     'Qwen2.5-1.5B-Instruct': {
         'davani': {'davani': np.float64(-0.021328137094703506), 'attitudes': np.float64(0.011172845152355402),
-                   'cade': np.float64(-0.24213542342349018), 'corpus': np.float64(0.04814618304407382)},
+                   'cade': np.float64(-0.24213542342349018), 'measuring': np.float64(0.04814618304407382)},
         'attitudes': {'davani': np.float64(-0.02306951042040499), 'attitudes': np.float64(-0.0027450971932097322),
-                      'cade': np.float64(0.03204824373089993), 'corpus': np.float64(0.005038808094207454)},
+                      'cade': np.float64(0.03204824373089993), 'measuring': np.float64(0.005038808094207454)},
         'cade': {'davani': np.float64(-0.030070942764749056), 'attitudes': np.float64(0.00799871218794889),
-                 'cade': np.float64(-0.1289714210617606), 'corpus': np.float64(0.03753680524966773)},
-        'corpus': {'davani': np.float64(-0.029422431020461576), 'attitudes': np.float64(0.00620786112336076),
-                   'cade': np.float64(-0.07418618959608198), 'corpus': np.float64(0.027875125451901288)}
+                 'cade': np.float64(-0.1289714210617606), 'measuring': np.float64(0.03753680524966773)},
+        'measuring': {'davani': np.float64(-0.029422431020461576), 'attitudes': np.float64(0.00620786112336076),
+                   'cade': np.float64(-0.07418618959608198), 'measuring': np.float64(0.027875125451901288)}
     }
 }
 
@@ -202,14 +203,15 @@ def generate_heatmap(model_name, heat_map):
     # Creiamo una matrice di valori per la heatmap
     data_matrix = []
     datasets = list(model_data.keys())
+    datasets.sort(reverse=True)
 
     for row in datasets:
         data_matrix.append([model_data[row][col] for col in datasets])
-
+    data_matrix = data_matrix[::-1]  # Inverti la matrice dei dati
     # Creazione della figura e della heatmap
     plt.figure(figsize=(8, 6))
     ax = sns.heatmap(
-        data_matrix, annot=True, cmap='coolwarm', xticklabels=datasets, yticklabels=datasets,
+        data_matrix, annot=True, cmap='coolwarm', xticklabels=datasets, yticklabels=datasets[::-1],
         vmin=-1, vmax=1, fmt='.2f', cbar_kws={'label': 'Valore'}, square=True
     )
 
@@ -219,7 +221,7 @@ def generate_heatmap(model_name, heat_map):
     # Aggiungi le etichette agli assi
     ax.set_ylabel('Ghost Annotator Datasets Profiling', fontsize=12)
     ax.set_xlabel('User Dataset Profiling', fontsize=12)
-    plt.savefig(f"Gender bias for Ghost Annotators profiled with {model_name}.png")  # Sostituisci il nome del file come preferisci
+    plt.savefig(f"img/Gender bias for Ghost Annotators profiled with {model_name}.png")  # Sostituisci il nome del file come preferisci
 
     # Mostra la heatmap
     plt.show()

@@ -42,7 +42,8 @@ for key in p_values.keys():
     if key[1] not in datasets:
         datasets.append(key[1])
 
-
+# Ordina i modelli e i dataset alfabeticamente
+datasets.sort(reverse=True)  # Ordina i dataset alfabeticamente
 models = ['Llama-3.2-1B-Instruct', 'Qwen2.5-1.5B-Instruct', 'Llama-3.1-8B-Instruct','Qwen2.5-7B-Instruct']  # Inserisci l'ordine che desideri
 
 # Creazione della matrice vuota per tau e p-value
@@ -92,5 +93,6 @@ print(pearsonr_values)
 print(p_values)
 # Spazio regolato
 plt.subplots_adjust(left=0.2, right=0.9, top=0.823, bottom=0.2)
+plt.savefig("img/correlation_between_brierscore_and_isolation.png")
 
 plt.show()

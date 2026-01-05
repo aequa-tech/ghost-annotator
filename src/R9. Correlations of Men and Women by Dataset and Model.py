@@ -126,7 +126,7 @@ print(df_correlations.columns)
 print(df_correlations['dataset'].dtype)
 print(df_correlations['dataset'])
 # Visualizzazione con un grouped bar chart
-
+df_correlations=df_correlations.sort_values(by='dataset', ascending=False)
 # Crea il grafico
 plt.figure(figsize=(14, 7))
 
@@ -146,7 +146,7 @@ for p in ax.patches:
         p.set_hatch('\\\\')  # Tratteggio diagonale invertito per le donne
 
 # Aggiungi titoli e etichette
-plt.title('Correlations of Men and Women by Dataset and Model')
+plt.title('Correlations of Men and Women by Dataset and Model', fontweight="bold")
 plt.xlabel('Dataset')
 plt.ylabel('Correlation')
 
@@ -174,6 +174,8 @@ plt.legend(handles=legend_handles, labels=legend_labels, title="Model and Gender
 # Ruota le etichette dei dataset per una visibilità migliore
 plt.xticks(rotation=45)
 plt.tight_layout()
+plt.savefig(
+    f"img/correlation_men_women_model.png")  # Sostituisci il nome del file come preferisci
 
 # Mostra il grafico
 plt.show()

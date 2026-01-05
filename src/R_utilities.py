@@ -6,14 +6,14 @@ mappatura_modelli = {
 }
 mappatura_dataset = {
     'davani': 'davani',
-    'corpus': 'corpus',
+    'measuring': 'measuring',
     'attitudes': 'attitudes',
     'cade': 'cade'
 }
 
 mappatura_dataset_colore = {
     'davani': '#a6cee3',
-    'corpus': '#1f78b4',
+    'measuring': '#1f78b4',
     'attitudes': '#b2df8a',
     'cade': '#33a02c'
 }

@@ -8,7 +8,7 @@ from matplotlib.ticker import FuncFormatter
 # Lista dei file CSV da caricare
 files = ['data/measuring_hatespeech/attitudes - hate speech.csv',
          'data/measuring_hatespeech/cade - acceptability.csv',
-         'data/measuring_hatespeech/corpus - violence.csv',
+         'data/measuring_hatespeech/measuring - violence.csv',
          'data/measuring_hatespeech/davani - offensiveness.csv']  # Sostituisci con i tuoi file
 
 # Crea il grafico

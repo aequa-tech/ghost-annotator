@@ -60,6 +60,7 @@ df_risultati = pd.DataFrame(dati_per_grafico, columns=['model_name', 'dataset_na
 # Crea un nuovo dataframe con i nomi rimappati per i modelli
 df_risultati['model_name'] = df_risultati['model_name'].map(mappatura_modelli)
 df_risultati['dataset_name'] = df_risultati['dataset_name'].map(mappatura_dataset)
+df_risultati['dataset_name'] = df_risultati['dataset_name'].sort_values()
 
 # Creazione del grafico
 plt.figure(figsize=(10, 6))
@@ -90,6 +91,7 @@ plt.xlabel('Datasets')
 plt.ylabel('Percentage of Hallucinations (%)')
 plt.xticks(rotation=45)
 plt.tight_layout()
+plt.savefig("img/Hallucinations Across Models and Datasets.png")
 
 # Mostra il grafico
 plt.show()

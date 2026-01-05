@@ -87,7 +87,7 @@ for i in range(len(models)):
             text_color = "black"
             ax.text(j + 0.5, i + 0.17, f"p ≥ 0.05", ha='center', va='center', fontsize=8, color=text_color)
 
-plt.title('Correlation between the Brier score and Annotator Isolation', fontweight='bold')
+plt.title('Correlation between NCS and Annotator Isolation', fontweight='bold')
 
 print(pearsonr_values)
 print(p_values)

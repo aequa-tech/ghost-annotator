@@ -5,8 +5,8 @@ mappatura_modelli = {
     'Qwen2.5-7B-Instruct': 'Qwen2.5-7B'
 }
 mappatura_dataset = {
-    'davani': 'davani',
-    'measuring': 'measuring',
+    'davani': 'disentangle',
+    'measuring': 'mhs',
     'attitudes': 'attitudes',
     'cade': 'cade'
 }

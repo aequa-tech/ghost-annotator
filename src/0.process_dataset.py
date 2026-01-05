@@ -2,7 +2,7 @@ import pandas as pd,numpy as np
 from collections import Counter
 import glob
 
-df = pd.read_csv('data/measuring_hatespeech/corpus - violence.csv')
+df = pd.read_csv('data/measuring_hatespeech/measuring - violence.csv')
 
 
 def compute_relative_frequencies(a_df):
@@ -79,7 +79,7 @@ def compute_false_ratio(a_df):
 
 ds_statistics = list()
 
-for doc in ['data/measuring_hatespeech/attitudes - hate speech.csv','data/measuring_hatespeech/cade - acceptability.csv','data/measuring_hatespeech/corpus - violence.csv','data/measuring_hatespeech/davani - offensiveness.csv']:
+for doc in ['data/measuring_hatespeech/attitudes - hate speech.csv','data/measuring_hatespeech/cade - acceptability.csv','data/measuring_hatespeech/measuring - violence.csv','data/measuring_hatespeech/davani - offensiveness.csv']:
     keys = [
     "dataset",
     "n_annotators",

@@ -178,7 +178,7 @@ for model_name in [
 
     for (dataset,corpus_prompt) in [
         (
-                '../data/measuring_hatespeech/corpus - violence.csv',
+                '../data/measuring_hatespeech/measuring - violence.csv',
                  """Task: you are a participant to an annotation task for the recognition of violence
         
                 Instruction: read the following social media post and annotate it with one value from the following options

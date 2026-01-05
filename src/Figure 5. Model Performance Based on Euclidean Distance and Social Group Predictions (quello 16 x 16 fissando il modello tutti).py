@@ -99,8 +99,8 @@ for file_csv in file_csvs:
                     distances_1.append(distance)
 
             #ATTENZIONE: QUI METTERE IL LIMITE
-            distances_0_sorted = sorted(distances_0)[:20]
-            distances_1_sorted = sorted(distances_1)[:20]
+            distances_0_sorted = sorted(distances_0)[:]
+            distances_1_sorted = sorted(distances_1)[:]
 
             avg_distance_0 = np.mean(distances_0_sorted)
             avg_distance_1 = np.mean(distances_1_sorted)
@@ -143,7 +143,7 @@ def generate_heatmap(model_name, heat_map):
     # Aggiungi le etichette agli assi
     ax.set_ylabel('Ghost Annotator Profile', fontsize=13)
     ax.set_xlabel('User Profile', fontsize=13)
-    plt.savefig(f"img/Gender bias for Ghost Annotators profiled with {model_name} first 20.pdf")  # Sostituisci il nome del file come preferisci
+    plt.savefig(f"img/Gender bias for Ghost Annotators profiled with {model_name}.pdf")  # Sostituisci il nome del file come preferisci
 
     # Mostra la heatmap
     plt.show()

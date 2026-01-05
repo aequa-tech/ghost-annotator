@@ -2,6 +2,7 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import font_manager
 from matplotlib.ticker import FuncFormatter
 from R_utilities import mappatura_modelli, mappatura_dataset
 
@@ -61,11 +62,15 @@ sns.boxplot(x='dataset_name', y='brier_score_model', hue='model_name', data=df_b
             flierprops=flierprops,order=dataset_ordinati)
 
 # Aggiusta la formattazione
-plt.title('Model uncertainty Across Models and Datasets', fontweight='bold')
-plt.xlabel('Datasets')
-plt.ylabel('Model uncertainty')
-plt.xticks(rotation=45)
-plt.legend(title="Models")
+plt.title('Model uncertainty Across Models and Datasets', fontweight='bold', fontsize=24)
+plt.xlabel('Datasets',fontsize=18)
+plt.ylabel('Model uncertainty',fontsize=18)
+plt.xticks(rotation=45,fontsize=16)
+plt.yticks(fontsize=16)
+plt.ylim(0,0.3)
+font_properties = font_manager.FontProperties(weight='bold', size=18)
+plt.legend(title="Models", fontsize=16, title_fontproperties=font_properties,
+           ncol=2, loc='upper left')
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)
 plt.gca().spines['left'].set_visible(False)
@@ -73,7 +78,7 @@ plt.gca().spines['bottom'].set_visible(False)
 plt.grid(axis='y', color='lightgray', linestyle='-', linewidth=0.5, zorder=0)  # Griglia orizzontale, grigia chiara
 
 plt.tight_layout()
-plt.savefig("img/model_uncertainty_across_models_and_datasets.png")
+plt.savefig("img/model_uncertainty_across_models_and_datasets.pdf")
 
 
 # Mostra il grafico

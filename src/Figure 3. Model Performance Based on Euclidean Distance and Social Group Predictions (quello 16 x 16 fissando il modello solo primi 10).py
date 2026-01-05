@@ -12,6 +12,9 @@ import glob
 from sklearn.metrics import euclidean_distances
 from sklearn.metrics.pairwise import cosine_distances
 import json
+
+from src.R_utilities import mappatura_dataset
+
 # Cartella contenente i file CSV
 cartella_output = '../output_def'
 
@@ -29,6 +32,8 @@ for file_csv in file_csvs:
     df = pd.read_csv(os.path.join(cartella_output, file_csv.replace('step_2_', 'step_1_')))
     model_name = file_csv.split('/')[-1].split('_')[2]
     dataset_name = file_csv.split('_')[-1].split(".")[0]
+    dataset_name = mappatura_dataset[dataset_name]
+
     print(model_name, dataset_name)
 
     annotazioni_umanes = df[['comment_id', 'label']].drop_duplicates()
@@ -66,6 +71,7 @@ for file_csv in file_csvs:
     model_name = file_csv.split('_')[2]
     dataset_name = file_csv.split('_')[-1].split(".")[0]
     print(model_name,dataset_name)
+    dataset_name = mappatura_dataset[dataset_name]
 
     df_filtrato = df[df['social_group'].isin([0,1])]
     brier_scores = df[['brier_score_Q1', 'brier_score_Q2', 'brier_score_Q3']].values
@@ -91,8 +97,10 @@ for file_csv in file_csvs:
                     distances_0.append(distance)
                 else:
                     distances_1.append(distance)
-            distances_0_sorted = sorted(distances_0)[:]
-            distances_1_sorted = sorted(distances_1)[:]
+
+            #ATTENZIONE: QUI METTERE IL LIMITE
+            distances_0_sorted = sorted(distances_0)[:10]
+            distances_1_sorted = sorted(distances_1)[:10]
 
             avg_distance_0 = np.mean(distances_0_sorted)
             avg_distance_1 = np.mean(distances_1_sorted)
@@ -122,16 +130,20 @@ def generate_heatmap(model_name, heat_map):
     plt.figure(figsize=(8, 6))
     ax = sns.heatmap(
         data_matrix, annot=True, cmap='coolwarm', xticklabels=datasets, yticklabels=datasets[::-1],
-        vmin=-1, vmax=1, fmt='.2f', cbar_kws={'label': 'Valore'}, square=True
+        vmin=-1, vmax=1, fmt='.2f', cbar_kws={"shrink": 0.5,}, annot_kws={"color": "black","fontsize":13},square=True
     )
 
     # Aggiungi il titolo
-    plt.title(f"Gender bias for Ghost Annotators profiled with {model_name}",fontweight='bold')
-
+    plt.title(f"Gender bias with {model_name}",fontweight='bold',fontsize=20)
+    cbar = ax.collections[0].colorbar  # Prendi la colorbar dall'oggetto heatmap
+    cbar.set_ticks(np.linspace(-1, 1, 5))  # Imposta le tacche della colorbar (opzionale)
+    cbar.ax.tick_params(labelsize=13)  # Imposta la dimensione del font per i numeri della colorbar
+    plt.xticks(fontsize=13)
+    plt.yticks(fontsize=13)
     # Aggiungi le etichette agli assi
-    ax.set_ylabel('Ghost Annotator Datasets Profiling', fontsize=12)
-    ax.set_xlabel('User Dataset Profiling', fontsize=12)
-    plt.savefig(f"img/Gender bias for Ghost Annotators profiled with {model_name} first -.png")  # Sostituisci il nome del file come preferisci
+    ax.set_ylabel('Ghost Annotator Profile', fontsize=13)
+    ax.set_xlabel('User Profile', fontsize=13)
+    plt.savefig(f"img/Gender bias for Ghost Annotators profiled with {model_name} first 10.pdf")  # Sostituisci il nome del file come preferisci
 
     # Mostra la heatmap
     plt.show()

@@ -5,6 +5,8 @@ import pandas as pd
 from scipy.stats import pearsonr
 import os
 
+from src.R_utilities import mappatura_dataset
+
 cartella_output = '../output_def'  # Sostituisci con il percorso corretto
 
 def calcola_correlazione(file_csv):
@@ -14,7 +16,9 @@ def calcola_correlazione(file_csv):
     # Calcola la percentuale di predizioni "mai selezionate" rispetto al totale delle predizioni per ogni modello e dataset
     model_name, dataset_name = file_csv.split('/')[-1].split('_')[2], file_csv.split('_')[-1].split(".")[0]
     df['fraction_agreement']=1-df['fraction_agreement']
+
     corr, p_value = pearsonr(df['brier_score'], df['fraction_agreement'])
+
     return model_name, dataset_name, corr, p_value
 
 # Lista dei file CSV nella cartella di output
@@ -27,7 +31,7 @@ p_values = {}
 # Calcola la percentuale per ogni file CSV
 for file_csv in file_csvs:
     model_name, dataset_name, correlazione, p_value = calcola_correlazione(os.path.join(cartella_output, file_csv))
-
+    dataset_name = mappatura_dataset[dataset_name]
     pearsonr_values[(model_name, dataset_name)] = correlazione
     p_values[(model_name, dataset_name)] = p_value
 
@@ -60,16 +64,16 @@ for (var1, var2), p_val in p_values.items():
 # Creazione della heatmap
 fig, ax = plt.subplots(figsize=(8, 6))
 sns.heatmap(matrix, annot=True, fmt=".2f", cmap="coolwarm", vmin=-1, vmax=1, linewidths=0.5, square=True,
-            cbar_kws={"shrink": 0.5}, xticklabels=True, yticklabels=True, annot_kws={"color": "black"}, ax=ax)
+            cbar_kws={"shrink": 0.5,}, xticklabels=True, yticklabels=True, annot_kws={"color": "black","fontsize":13}, ax=ax)
 
 # Spostare le etichette della x in alto
 ax.xaxis.tick_top()
 ax.xaxis.set_label_position('top')
-plt.xticks(rotation=45, ha='left')
+plt.xticks(rotation=45, ha='left',fontsize=13)
 
 # Aggiungere le etichette delle righe correttamente
 ax.set_yticks(np.arange(len(models)) + 0.5)
-ax.set_yticklabels(models, rotation=0)
+ax.set_yticklabels(models, rotation=0,fontsize=13)
 
 # Rimozione delle tacche dell'asse Y
 ax.tick_params(axis='y', bottom=False, top=False)
@@ -82,17 +86,21 @@ for i in range(len(models)):
         p_val = p_matrix.iloc[i, j]
         if p_val < 0.05:  # Mostra solo p-value significativi
             text_color = "black"
-            ax.text(j + 0.5, i + 0.17, f"p < 0.05", ha='center', va='center', fontsize=8, color=text_color)
+            ax.text(j + 0.5, i + 0.17, f"p < 0.05", ha='center', va='center', fontsize=10, color=text_color)
         else:
             text_color = "black"
-            ax.text(j + 0.5, i + 0.17, f"p ≥ 0.05", ha='center', va='center', fontsize=8, color=text_color)
+            ax.text(j + 0.5, i + 0.17, f"p ≥ 0.05", ha='center', va='center', fontsize=10, color=text_color)
 
-plt.title('Correlation between NCS and Annotator Isolation', fontweight='bold')
+plt.title('Correlation between NCS and Annotator Isolation', fontweight='bold',fontsize=20)
+# Aggiungere la colorbar
+cbar = ax.collections[0].colorbar  # Prendi la colorbar dall'oggetto heatmap
+cbar.set_ticks(np.linspace(-1, 1, 5))  # Imposta le tacche della colorbar (opzionale)
+cbar.ax.tick_params(labelsize=13)  # Imposta la dimensione del font per i numeri della colorbar
 
 print(pearsonr_values)
 print(p_values)
 # Spazio regolato
-plt.subplots_adjust(left=0.2, right=0.9, top=0.823, bottom=0.2)
-plt.savefig("img/correlation_between_brierscore_and_isolation.png")
+plt.subplots_adjust(left=0.2, right=0.888, top=0.755, bottom=0.112)
+plt.savefig("img/correlation_between_brierscore_and_isolation.pdf")
 
 plt.show()

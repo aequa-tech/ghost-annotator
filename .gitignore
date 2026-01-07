@@ -7,3 +7,4 @@
 /triton-3.4.0+rocm7.0.2.gitf9e5bf54-cp312-cp312-linux_x86_64.whl
 /src/mirko 1. analisi generale.py
 src/__pycache__/R_utilities.cpython-312.pyc
+src/__pycache__*

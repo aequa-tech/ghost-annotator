@@ -81,10 +81,10 @@ sns.barplot(x='dataset_name', y='percentuale', hue='model_name', data=df_risulta
 
 
 plt.gca().yaxis.set_major_formatter(FuncFormatter(lambda y, _: f'{y:.0f}%'))
-plt.ylim(0, 119)
+plt.ylim(0, 105)
 # Creare un oggetto per il titolo della legenda con font grassetto
 font_properties = font_manager.FontProperties(weight='bold', size=18)
-plt.legend(title="Models", fontsize=16, title_fontproperties=font_properties, ncol=2,loc='upper center',bbox_to_anchor=(0.5, 0.99) )
+plt.legend(title="", fontsize=16, title_fontproperties=font_properties, ncol=1,loc='upper right',)#bbox_to_anchor=(0.36, 0.99) )
 plt.grid(axis='y', color='lightgray', linestyle='-', linewidth=0.5, zorder=0)  # Griglia orizzontale, grigia chiara
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)

@@ -69,7 +69,7 @@ plt.xticks(rotation=0,fontsize=16)
 plt.yticks(fontsize=16)
 plt.ylim(0,0.3)
 font_properties = font_manager.FontProperties(weight='bold', size=18)
-plt.legend(title="Models", fontsize=16, title_fontproperties=font_properties,
+plt.legend(title="", fontsize=16, title_fontproperties=font_properties,
            ncol=2, loc='upper left')
 plt.gca().spines['top'].set_visible(False)
 plt.gca().spines['right'].set_visible(False)

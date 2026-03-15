@@ -63,95 +63,175 @@ for file_csv in file_csvs:
     if model_name not in ghost_annotator:
         ghost_annotator[model_name]= {}
     ghost_annotator[model_name][dataset_name]=[Q1,Q2,Q3]
-rnd = np.random.default_rng(45764695743)
-
-head_map_data={}
-for file_csv in file_csvs:
-    print("\n",file_csv)
-    df = pd.read_csv(os.path.join(cartella_output, file_csv))
-    groups = rnd.integers(0,2,size=len(df))
-    df['social_group'] = groups
-    model_name = file_csv.split('_')[2]
-    dataset_name = file_csv.split('_')[-1].split(".")[0]
-    print(model_name,dataset_name)
-    dataset_name = mappatura_dataset[dataset_name]
-    #df['social_group'] = df['social_group'].sample(frac=1,random_state=1997).reset_index(drop=True)
-    df_filtrato = df[df['social_group'].isin([0,1])]
-    brier_scores = df[['brier_score_Q1', 'brier_score_Q2', 'brier_score_Q3']].values
-    social_groups = df['social_group'].values
-
-    for ghost_model_name in ghost_annotator.keys():
-        if ghost_model_name != model_name:
-            continue
-        for ghost_dataset_name in ghost_annotator[ghost_model_name].keys():
-
-            if ghost_model_name not in head_map_data:
-                head_map_data[ghost_model_name] = {}
-
-            distances_0=[]
-            distances_1=[]
-            for i in range(0,len(brier_scores)):
-                brier_score = np.array(brier_scores[i])
-                ghost_annotator_vector = np.array(ghost_annotator[ghost_model_name][ghost_dataset_name])
-                distance = cosine_distances([brier_score], [ghost_annotator_vector])[0][0]
-
-                if social_groups[i]==0:
-                    # Calcola la distanza Euclidea tra i due vettori (brier_score e ghost_annotator_vector)
-                    distances_0.append(distance)
-                else:
-                    distances_1.append(distance)
-
-            #ATTENZIONE: QUI METTERE IL LIMITE
-            distances_0_sorted = sorted(distances_0)[:10]
-            distances_1_sorted = sorted(distances_1)[:10]
-
-            avg_distance_0 = np.mean(distances_0_sorted)
-            avg_distance_1 = np.mean(distances_1_sorted)
-
-            #print(avg_distance_0,avg_distance_1,avg_distance_0 / float(avg_distance_1))
-            if ghost_dataset_name not in head_map_data[ghost_model_name]:
-                head_map_data[ghost_model_name][ghost_dataset_name]={}
-            head_map_data[ghost_model_name][ghost_dataset_name][dataset_name] = abs(float(avg_distance_1)-avg_distance_0 ) / (float(avg_distance_1)+avg_distance_0 )
 
 
-print(head_map_data)
 
-# Funzione per generare la heatmap per un dato modello
+import os
+import numpy as np
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from sklearn.metrics.pairwise import cosine_distances
+
+num = np.random.default_rng(42)
+
+# accumulate sums and counts
+heatmap_sum = {}
+heatmap_count = {}
+
+for seed in num.integers(0,1000000,size=20):
+
+    rnd = np.random.default_rng(seed)
+    head_map_data = {}
+
+    for file_csv in file_csvs:
+        print("\n",file_csv)
+
+        df = pd.read_csv(os.path.join(cartella_output, file_csv))
+
+        groups = rnd.integers(0,2,size=len(df))
+        df['social_group'] = groups
+
+        model_name = file_csv.split('_')[2]
+        dataset_name = file_csv.split('_')[-1].split(".")[0]
+
+        print(model_name,dataset_name)
+
+        dataset_name = mappatura_dataset[dataset_name]
+
+        brier_scores = df[['brier_score_Q1', 'brier_score_Q2', 'brier_score_Q3']].values
+        social_groups = df['social_group'].values
+
+        for ghost_model_name in ghost_annotator.keys():
+
+            if ghost_model_name != model_name:
+                continue
+
+            for ghost_dataset_name in ghost_annotator[ghost_model_name].keys():
+
+                if ghost_model_name not in head_map_data:
+                    head_map_data[ghost_model_name] = {}
+
+                distances_0=[]
+                distances_1=[]
+
+                for i in range(len(brier_scores)):
+
+                    brier_score = np.array(brier_scores[i])
+                    ghost_vector = np.array(ghost_annotator[ghost_model_name][ghost_dataset_name])
+
+                    distance = cosine_distances([brier_score], [ghost_vector])[0][0]
+
+                    if social_groups[i]==0:
+                        distances_0.append(distance)
+                    else:
+                        distances_1.append(distance)
+
+                distances_0_sorted = sorted(distances_0)[:10]
+                distances_1_sorted = sorted(distances_1)[:10]
+
+                avg_distance_0 = np.mean(distances_0_sorted)
+                avg_distance_1 = np.mean(distances_1_sorted)
+
+                value = abs(avg_distance_1-avg_distance_0) / (avg_distance_1+avg_distance_0)
+
+                if ghost_dataset_name not in head_map_data[ghost_model_name]:
+                    head_map_data[ghost_model_name][ghost_dataset_name] = {}
+
+                head_map_data[ghost_model_name][ghost_dataset_name][dataset_name] = value
+
+    # -------- accumulate results --------
+
+    for model in head_map_data:
+        for row in head_map_data[model]:
+            for col in head_map_data[model][row]:
+
+                value = head_map_data[model][row][col]
+
+                heatmap_sum.setdefault(model, {}).setdefault(row, {}).setdefault(col, 0)
+                heatmap_count.setdefault(model, {}).setdefault(row, {}).setdefault(col, 0)
+
+                heatmap_sum[model][row][col] += value
+                heatmap_count[model][row][col] += 1
+
+
+# -------- compute final average --------
+
+heatmap_avg = {}
+
+for model in heatmap_sum:
+
+    heatmap_avg[model] = {}
+
+    for row in heatmap_sum[model]:
+
+        heatmap_avg[model][row] = {}
+
+        for col in heatmap_sum[model][row]:
+
+            heatmap_avg[model][row][col] = (
+                heatmap_sum[model][row][col] /
+                heatmap_count[model][row][col]
+            )
+
+
+print("\nFINAL AVERAGED HEATMAP")
+print(heatmap_avg)
+
+
+# -------- Heatmap visualization function --------
+
 def generate_heatmap(model_name, heat_map):
-    # Otteniamo i dati relativi a ciascun modello
+
     model_data = heat_map[model_name]
 
-    # Creiamo una matrice di valori per la heatmap
-    data_matrix = []
     datasets = list(model_data.keys())
     datasets.sort(reverse=True)
 
+    data_matrix = []
+
     for row in datasets:
         data_matrix.append([model_data[row][col] for col in datasets])
-    data_matrix = data_matrix[::-1]  # Inverti la matrice dei dati
-    # Creazione della figura e della heatmap
-    plt.figure(figsize=(8, 6))
+
+    data_matrix = data_matrix[::-1]
+
+    plt.figure(figsize=(8,6))
+
     ax = sns.heatmap(
-        data_matrix, annot=True, cmap='coolwarm', xticklabels=datasets, yticklabels=datasets[::-1],
-        vmin=-1, vmax=1, fmt='.2f', cbar_kws={"shrink": 0.5,}, annot_kws={"color": "black","fontsize":13},square=True
+        data_matrix,
+        annot=True,
+        cmap='coolwarm',
+        xticklabels=datasets,
+        yticklabels=datasets[::-1],
+        vmin=0,
+        vmax=1,
+        fmt='.2f',
+        cbar_kws={"shrink":0.5},
+        annot_kws={"color":"black","fontsize":13},
+        square=True
     )
 
-    # Aggiungi il titolo
-    plt.title(f"Gender bias with {model_name}",fontweight='bold',fontsize=20)
-    cbar = ax.collections[0].colorbar  # Prendi la colorbar dall'oggetto heatmap
-    cbar.set_ticks(np.linspace(-1, 1, 5))  # Imposta le tacche della colorbar (opzionale)
-    cbar.ax.tick_params(labelsize=13)  # Imposta la dimensione del font per i numeri della colorbar
+    plt.title(f"Group bias with {model_name}",fontweight='bold',fontsize=20)
+
+    # Fix colorbar ticks
+    cbar = ax.collections[0].colorbar
+    ticks = np.linspace(0,1,3)  # 0, 0.2, 0.4, 0.6, 0.8, 1
+    cbar.set_ticks(ticks)
+    cbar.set_ticklabels([f"{t:.1f}" for t in ticks])
+    cbar.ax.tick_params(labelsize=13)
+
     plt.xticks(fontsize=13)
     plt.yticks(fontsize=13)
-    # Aggiungi le etichette agli assi
-    ax.set_ylabel('Ghost Annotator Profile', fontsize=13)
-    ax.set_xlabel('User Profile', fontsize=13)
-    plt.savefig(f"img/Gender bias for Ghost Annotators profiled with {model_name} first 10.pdf")  # Sostituisci il nome del file come preferisci
 
-    # Mostra la heatmap
+    ax.set_ylabel('Ghost Annotator Profile',fontsize=13)
+    ax.set_xlabel('User Profile',fontsize=13)
+
+    plt.savefig(f"img/Gender_bias_averaged_{model_name}.pdf")
+
     plt.show()
+    plt.close()
 
-# Genera la heatmap per ciascun modello
-for model in head_map_data:
-    generate_heatmap(model, head_map_data)
+# -------- plot averaged heatmaps --------
 
+for model in heatmap_avg:
+    generate_heatmap(model, heatmap_avg)

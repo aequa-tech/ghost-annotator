@@ -22,7 +22,7 @@ def brier(probs,label):
 
 l = list()
 for doc in glob.glob('output_def/results*.csv'):
-    df = pd.read_csv('output_def/results_Llama-3.1-8B-Instruct_attitudes.csv')
+    df = pd.read_csv(doc)
 
     df.probs = df.probs.apply(lambda x:eval(x))
     lab_types = np.sort(df.label.drop_duplicates().to_list())
@@ -65,6 +65,8 @@ for doc in glob.glob('output_def/results*.csv'):
     df['brier1'] = brier_1
     df['brier2'] = brier_2
     df['brier3'] = brier_3
+
+    
 
     gp = df.groupby('annotator_id').aggregate({'brier_score':np.average,'brier1':np.average,'brier2':np.average,'brier3':np.average}).reset_index()
     d = dict()

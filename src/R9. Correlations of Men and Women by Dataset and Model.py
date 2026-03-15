@@ -6,12 +6,11 @@ import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.patches import Rectangle
 from scipy.stats import ttest_ind, mannwhitneyu
-from sklearn.metrics import pairwise_distances
 from scipy.stats import ttest_ind, mannwhitneyu
 import seaborn as sns
 import matplotlib.pyplot as plt
 # Cartella contenente i file CSV
-cartella_output = '../output_def'
+cartella_output = 'output_def'
 
 # Lista dei file CSV nella cartella di output
 file_csvs = [f for f in os.listdir(cartella_output) if f.startswith('step_1_') and f.endswith('.csv')]
@@ -29,6 +28,7 @@ def explore_dataframe(df):
     print(df.describe())
     print("\nDistribuzione dei gruppi sociali (0 = uomo, 1 = donna):")
     print(df['social_group'].value_counts())
+    #df['social_group'] = df['social_group'].sample(frac=1).reset_index(drop=True)
 
     # Distribuzione delle etichette per social_group
     print("\nDistribuzione delle annotazioni per ogni gruppo sociale (0 = uomo, 1 = donna):")

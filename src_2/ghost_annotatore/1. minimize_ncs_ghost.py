@@ -46,7 +46,7 @@ def ghost_ncs(probs: dict[str, float]) -> float:
     """Compute non conformity score using model argmax as pseudo-label."""
     if not probs:
         raise ValueError("Empty probs dictionary")
-
+    #qui si usa max invece che min (2. maximized_ncs_ghost.py)
     pred_label = max(probs.items(), key=lambda item: item[1])[0]
     components = []
 

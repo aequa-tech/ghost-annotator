@@ -20,7 +20,7 @@ if not result_files:
 else:
     for filepath in result_files:
         filename = os.path.basename(filepath)
-        df = pd.read_csv(filepath, usecols=["comment_id", "label", "probs"])
+        df = pd.read_csv(filepath, usecols=["comment_id", "probs"])
         df = df.drop_duplicates()
         dest_path = os.path.join(SCRIPT_DIR, filename)
         df.to_csv(dest_path, index=False)

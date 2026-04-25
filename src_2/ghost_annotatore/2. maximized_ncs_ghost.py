@@ -47,6 +47,7 @@ def ghost_ncs_maximized(probs: dict[str, float]) -> float:
     if not probs:
         raise ValueError("Empty probs dictionary")
 
+    #qui si usa min invece che max (1. minimized_ncs_ghost.py)
     ghost_label = min(probs.items(), key=lambda item: item[1])[0]
     components = []
 

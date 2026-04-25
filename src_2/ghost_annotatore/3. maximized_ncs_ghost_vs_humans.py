@@ -105,7 +105,7 @@ def compute_ncs_for_label(probs: dict[str, float], chosen_label: str) -> float:
             components.append(prob**2)
     return float(sum(components) / len(components))
 
-
+#questa funzione sceglie l'etichetta fantasma (ghost label) secondo la regola "empty label first" descritta in alto, e restituisce anche un booleano che indica se l'etichetta scelta è vuota (non presente tra quelle usate dagli umani) o meno.
 def select_ghost_label(probs: dict[str, float], human_labels: set[str]) -> tuple[str, bool]:
     """Select ghost label using the 'empty label first' rule."""
     available_labels = list(probs.keys())
